@@ -1,4 +1,4 @@
-# HopBridge v0.0.1
+# SynapseBridge v0.0.1
 
 Program that screens https://synapseprotocol.com for arbitrage through their APIs. Alerts via a Telegram message if something of interest is found.
 

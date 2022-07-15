@@ -1,0 +1,62 @@
+{ 
+    "USDC": {
+        "swap_amount": 49000,
+        "arbitrage": 50,
+        "networks": {
+            "Ethereum": {
+                "decimals": 6,
+                "chain_id": 1
+            },
+            "Optimism": {
+                "decimals": 6,
+                "chain_id": 10
+            },
+            "Binance": {
+                "decimals": 18,
+                "chain_id": 56
+            },
+            "Polygon": {
+                "decimals": 6,
+                "chain_id": 137
+            },
+            "Fantom": {
+                "decimals": 6,
+                "chain_id": 250
+            },
+            "Arbitrum": {
+                "decimals": 6,
+                "chain_id": 42161
+            },
+            "Avalanche": {
+                "decimals": 6,
+                "chain_id": 43114
+            }
+        }
+    },
+    "ETH": {
+        "swap_amount": 49000,
+        "arbitrage": 50,
+        "networks": {
+            "Ethereum": {
+                "decimals": 6,
+                "chain_id": 1
+            },
+            "Optimism": {
+                "decimals": 6,
+                "chain_id": 10
+            },
+            "Fantom": {
+                "decimals": 6,
+                "chain_id": 250
+            },
+            "Arbitrum": {
+                "decimals": 6,
+                "chain_id": 42161
+            },
+            "Avalanche": {
+                "decimals": 6,
+                "chain_id": 43114
+            }
+        }
+    }
+}
