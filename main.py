@@ -44,8 +44,6 @@ if args.screen:
             swap_amount = get_bridge_output(*func_args)
             # Execute only if swap_amount is Not None, eg. get request was successful
             if swap_amount and swap_amount >= min_arbitrage:
-                amount = func_args[0]
-                arbitrage = swap_amount - amount
 
                 decimals_in, chain_id_in, token_in = arg[3]
                 decimals_out, chain_id_out, token_out = arg[4]
@@ -53,17 +51,20 @@ if args.screen:
                 network_out = network_ids[str(chain_id_out)]
                 timestamp = datetime.now().astimezone().strftime(time_format)
 
+                amount = func_args[0]
+                arbitrage = round((swap_amount - amount), int(decimals_in / 3))
+
                 message = f"{timestamp}\n" \
                           f"Sell {amount:,} {token_in} {network_in} -> {network_out}\n" \
                           f"\t--->Arbitrage: <a href='https://synapseprotocol.com'>{arbitrage:,} {token_out}</a>"
 
-                ter_msg = f"Sell {amount:,} {network_in}, {token_in} -> {network_out}, {token_out}\n" \
-                          f"\t--->Arbitrage: {arbitrage:,} {token_out}"
+                ter_msg = f"Sell {amount:,} {token_in} {network_in} -> {network_out}\n" \
+                          f"--->Arbitrage: {arbitrage:,} {token_out}"
 
                 telegram_send_message(message)
                 log_arbitrage.info(ter_msg)
                 print(ter_msg)
 
-        # sleep(10)
+        sleep(10)
         end = perf_counter()
-        print(f"Loop executed in {(end - start):,} secs.")
+        print(f"Loop time - {(end - start):,} secs.")
