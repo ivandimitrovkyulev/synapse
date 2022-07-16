@@ -1,22 +1,34 @@
-import requests
-import decimal
+import os
+import sys
+import json
+
+from pprint import pprint
+from atexit import register
+from datetime import datetime
+
+from src.synapse.exceptions import exit_handler
+from src.synapse.variables import time_format
+from src.synapse.interface import args
+from src.synapse.api import get_bridge_output
 
 
-api = "https://syn-api-dev.herokuapp.com/v1/estimate_bridge_output" \
-      "?fromChain={chainIn}&toChain={chainOut}" \
-      "&fromToken={tokenIn}&toToken={tokenOut}" \
-      "&amountFrom={amountIn}"
+if len(sys.argv) != 3:
+    sys.exit(f"Usage: python3 {os.path.basename(__file__)} <input_file>\n")
 
-amount = 1000
-decimals = 6
-amountIn = amount * (10 ** decimals)
-tokenIn = tokenOut = "USDC"
-chainIn = "ETH"
-chainOut = "BOBA"
+# Send telegram debug message if program terminates
+program_name = os.path.abspath(os.path.basename(__file__))
+register(exit_handler, program_name)
 
-url = api.format(amountIn=amountIn, tokenIn=tokenIn, tokenOut=tokenOut, chainIn=chainIn, chainOut=chainOut)
-message = requests.get(url).json()
+# Fetch variables
+info = json.loads(sys.argv[-1])
+timestamp = datetime.now().astimezone().strftime(time_format)
+print(f"{timestamp} - Started screening:\n")
 
-print(f"{amount} swapped for {message['amountToReceive']}")
-amountOut = int(message['amountToReceive']) / (10 ** decimals)
-print(f"{amount} swapped for {amountOut}")
+dictionaries = [dictionary for dictionary in info.values() if type(dictionary) is dict]
+pprint(dictionaries)
+
+
+if args.screen:
+
+    while True:
+        pass

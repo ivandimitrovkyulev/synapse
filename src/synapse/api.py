@@ -27,8 +27,8 @@ def get_bridge_output(amount: float, token: str, decimals_in: int, decimals_out:
     :param token: Token symbol, eg. USDC
     :param decimals_in: Decimals of token in origin chain
     :param decimals_out: Decimals of token in target chain
-    :param chain_in: Origin chain
-    :param chain_out: Target chain
+    :param chain_id_in: Origin chain
+    :param chain_id_out: Target chain
     :return: Amount swapped out
     """
     api = "https://syn-api-dev.herokuapp.com/v1/estimate_bridge_output" \
@@ -50,7 +50,3 @@ def get_bridge_output(amount: float, token: str, decimals_in: int, decimals_out:
     amount_out = int(message['amountToReceive']) / (10 ** decimals_out)
 
     return amount_out
-
-
-a = get_bridge_output(100000, "USDC", 6, 6, 1, 10)
-print(a)
