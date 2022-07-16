@@ -2,7 +2,7 @@ import os
 import sys
 import json
 
-from time import sleep, perf_counter
+from time import sleep
 from pprint import pprint
 from atexit import register
 from datetime import datetime
@@ -34,10 +34,7 @@ if args.screen:
 
     while True:
 
-        start = perf_counter()
         for arg in parse_args(info):
             arbitrage_alert(arg)
 
         sleep(10)
-        end = perf_counter()
-        print(f"Loop time - {(end - start):,} secs.")
