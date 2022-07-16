@@ -1,62 +1,26 @@
 { 
     "USDC": {
-        "swap_amount": 49000,
-        "arbitrage": 50,
+        "swap_amount": 50000,
+        "arbitrage": -1000,
         "networks": {
-            "Ethereum": {
-                "decimals": 6,
-                "chain_id": 1
-            },
-            "Optimism": {
-                "decimals": 6,
-                "chain_id": 10
-            },
-            "Binance": {
-                "decimals": 18,
-                "chain_id": 56
-            },
-            "Polygon": {
-                "decimals": 6,
-                "chain_id": 137
-            },
-            "Fantom": {
-                "decimals": 6,
-                "chain_id": 250
-            },
-            "Arbitrum": {
-                "decimals": 6,
-                "chain_id": 42161
-            },
-            "Avalanche": {
-                "decimals": 6,
-                "chain_id": 43114
-            }
+            "Ethereum":  {"decimals": 6,  "chain_id": 1,     "token": "USDC"},
+            "Optimism":  {"decimals": 6,  "chain_id": 10,    "token": "USDC"},
+            "Fantom":    {"decimals": 6,  "chain_id": 250,   "token": "USDC"},
+            "Arbitrum":  {"decimals": 6,  "chain_id": 42161, "token": "USDC"},
+            "Avalanche": {"decimals": 6,  "chain_id": 43114, "token": "USDC"},
+            "Binance":   {"decimals": 18, "chain_id": 56,    "token": "USDC"},
+            "Polygon":   {"decimals": 6,  "chain_id": 137,   "token": "USDC"}
         }
     },
     "ETH": {
-        "swap_amount": 49000,
-        "arbitrage": 50,
+        "swap_amount": 50,
+        "arbitrage": -1,
         "networks": {
-            "Ethereum": {
-                "decimals": 6,
-                "chain_id": 1
-            },
-            "Optimism": {
-                "decimals": 6,
-                "chain_id": 10
-            },
-            "Fantom": {
-                "decimals": 6,
-                "chain_id": 250
-            },
-            "Arbitrum": {
-                "decimals": 6,
-                "chain_id": 42161
-            },
-            "Avalanche": {
-                "decimals": 6,
-                "chain_id": 43114
-            }
+            "Ethereum":  {"decimals": 18, "chain_id": 1,     "token": "ETH"},
+            "Optimism":  {"decimals": 18, "chain_id": 10,    "token": "WETH"},
+            "Fantom":    {"decimals": 18, "chain_id": 250,   "token": "FTM_ETH"},
+            "Arbitrum":  {"decimals": 18, "chain_id": 42161, "token": "WETH"},
+            "Avalanche": {"decimals": 18, "chain_id": 43114, "token": "WETH_E"}
         }
     }
 }
