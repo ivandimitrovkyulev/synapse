@@ -14,6 +14,7 @@ from src.synapse.variables import (
 def parse_args(schema: dict) -> List[list]:
     """
     Parses input schema and returns a list of arguments ready to be parsed to a function.
+    Returns the following scheme: [10, 'USDC', [100, 1100, 100], [6, 1, 'USDC'], [6, 10, 'USDC']]
 
     :param schema: Dictionary with input information
     :return: List of all argument lists
@@ -37,20 +38,34 @@ def parse_args(schema: dict) -> List[list]:
 
 
 def arbitrage_alert(arguments: List) -> None:
+    """
+    Queries bridge swap output and if arbitrage > min then alerts for the highest arbitrage via Telegram.
+
+    :param arguments: List of all network arguments in format:
+    [10, 'USDC', [100, 1100, 100], [6, 1, 'USDC'], [6, 10, 'USDC']]
+    :return: None
+    """
     min_arbitrage, coin, *func_args = arguments
-    amount = func_args[0]
 
     # Query swap amount out
-    swap_amount = get_bridge_output(*func_args)
+    data = get_bridge_output(*func_args)
+
+    if not data:
+        return None
+
+    arbitrage = data[0]
+    amount = data[1]
+
     # Execute only if swap_amount is Not None, eg. get request was successful
-    if swap_amount and ((swap_amount - amount) >= min_arbitrage):
+    if arbitrage >= min_arbitrage:
+
         decimals_in, chain_id_in, token_in = arguments[3]
         decimals_out, chain_id_out, token_out = arguments[4]
         network_in = network_ids[str(chain_id_in)]
         network_out = network_ids[str(chain_id_out)]
         timestamp = datetime.now().astimezone().strftime(time_format)
 
-        arbitrage = round((swap_amount - amount), int(decimals_in / 3))
+        arbitrage = round(arbitrage, int(decimals_in / 3))
 
         message = f"{timestamp}\n" \
                   f"Sell {amount:,} {token_in} {network_in} -> {network_out}\n" \

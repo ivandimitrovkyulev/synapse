@@ -23,16 +23,16 @@ def get_token_networks(token: str) -> list:
     return response
 
 
-def get_bridge_output(amount: float, network_in: Iterable, network_out: Iterable,
-                      attempts: int = 3) -> float or None:
+def get_bridge_output(amounts: list, network_in: Iterable, network_out: Iterable,
+                      attempts: int = 2) -> tuple or None:
     """
     Queries https://synapseprotocol.com for swap amount for a cross-chain bridge transaction.
 
-    :param amount: Amount to swap
-    :param network_in: Origin chain iterable with decimals and chain id
-    :param network_out: Target chain iterable with decimals and chain id
+    :param amounts: Amount ranges to swap
+    :param network_in: Origin chain iterable with decimals, chain_id & token_name
+    :param network_out: Target chain iterable with decimals, chain_id & token_name
     :param attempts: Max number of times to repeat GET request
-    :return: Amount swapped out
+    :return: Tuple of max_arb & amount swapped in
     """
     decimals_in, chain_id_in, token_in = network_in
     decimals_out, chain_id_out, token_out = network_out
@@ -44,27 +44,38 @@ def get_bridge_output(amount: float, network_in: Iterable, network_out: Iterable
           "&fromToken={tokenIn}&toToken={tokenOut}" \
           "&amountFrom={amountIn}"
 
-    amount_in = amount * (10 ** decimals_in)
+    all_arbs = {}
+    for amount in range(amounts[0], amounts[1], amounts[2]):
 
-    url = api.format(amountIn=amount_in,
-                     tokenIn=token_in,
-                     tokenOut=token_out,
-                     chainIn=chain_id_in,
-                     chainOut=chain_id_out)
+        amount_in = amount * (10 ** decimals_in)
 
-    counter = 1
-    while True:
-        try:
-            message = requests.get(url).json()
-            amount_out = int(message['amountToReceive']) / (10 ** decimals_out)
+        url = api.format(amountIn=amount_in,
+                         tokenIn=token_in,
+                         tokenOut=token_out,
+                         chainIn=chain_id_in,
+                         chainOut=chain_id_out)
 
-            return amount_out
+        counter = 1
+        while True:
+            try:
+                message = requests.get(url).json()
+                amount_out = int(message['amountToReceive']) / (10 ** decimals_out)
+                arbitrage = amount_out - amount
+                all_arbs[arbitrage] = amount
+                break
 
-        except Exception:
-            log_error.warning(f"Error querying 'estimate_bridge_output' for "
-                              f"{name_in}, {token_in} -> {name_out}, {token_out}. Attempt: {counter}")
+            except Exception:
+                log_error.warning(f"Error querying 'estimate_bridge_output' for "
+                                  f"{name_in}, {token_in} -> {name_out}, {token_out}. Attempt: {counter}")
 
-            counter += 1
-            if counter > attempts:
-                # Break and return None
-                return None
+                counter += 1
+                if counter > attempts:
+                    # Break and return None
+                    break
+
+    if len(all_arbs) > 0:
+        max_arb = max(all_arbs)
+        return max_arb, all_arbs[max_arb]
+
+    else:
+        return None
