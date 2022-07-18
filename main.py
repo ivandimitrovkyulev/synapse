@@ -2,10 +2,14 @@ import os
 import sys
 import json
 
-from time import sleep, perf_counter
 from pprint import pprint
 from atexit import register
 from datetime import datetime
+from multiprocessing.dummy import Pool
+from time import (
+    sleep,
+    perf_counter,
+)
 
 from src.synapse.exceptions import exit_handler
 from src.synapse.interface import args
@@ -35,8 +39,10 @@ if args.screen:
     while True:
         start = perf_counter()
 
-        for arg in parse_args(info):
-            arbitrage_alert(arg)
+        arguments = parse_args(info)
+
+        with Pool(os.cpu_count()) as pool:
+            pool.map(arbitrage_alert, arguments)
 
         sleep(10)
 
