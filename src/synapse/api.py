@@ -23,7 +23,7 @@ def get_token_networks(token: str) -> list:
     return response
 
 
-def get_bridge_output(amounts: list, network_in: Iterable, network_out: Iterable,
+def get_bridge_output(amounts: Iterable, network_in: Iterable, network_out: Iterable,
                       attempts: int = 2) -> tuple or None:
     """
     Queries https://synapseprotocol.com for swap amount for a cross-chain bridge transaction.
@@ -45,7 +45,7 @@ def get_bridge_output(amounts: list, network_in: Iterable, network_out: Iterable
           "&amountFrom={amountIn}"
 
     all_arbs = {}
-    for amount in range(amounts[0], amounts[1], amounts[2]):
+    for amount in range(*amounts):
 
         amount_in = amount * (10 ** decimals_in)
 

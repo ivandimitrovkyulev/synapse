@@ -1,6 +1,6 @@
 { 
     "USDC": {
-        "swap_amount": [10000, 110000, 10000],
+        "swap_amount": [10000, 110000, 20000],
         "arbitrage": 10,
         "networks": {
             "Ethereum":  {"decimals": 6,  "chain_id": 1,     "token": "USDC"},
@@ -13,7 +13,7 @@
         }
     },
     "ETH": {
-        "swap_amount": [10, 110, 10],
+        "swap_amount": [10, 110, 20],
         "arbitrage": 0.02,
         "networks": {
             "Ethereum":  {"decimals": 18, "chain_id": 1,     "token": "ETH"},
