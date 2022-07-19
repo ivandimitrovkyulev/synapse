@@ -9,7 +9,7 @@ from requests import (
 from src.synapse.logger import log_error
 from src.synapse.variables import (
     TOKEN,
-    CHAT_ID_ALERTS,
+    CHAT_ID_ALERTS_ALL,
     CHAT_ID_DEBUG,
 )
 
@@ -48,7 +48,7 @@ def telegram_send_message(
         if debug:
             telegram_chat_id = CHAT_ID_DEBUG
         else:
-            telegram_chat_id = CHAT_ID_ALERTS
+            telegram_chat_id = CHAT_ID_ALERTS_ALL
 
     # construct url using token for a sendMessage POST request
     url = "https://api.telegram.org/bot{}/sendMessage".format(telegram_token)

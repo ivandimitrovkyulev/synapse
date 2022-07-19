@@ -13,13 +13,18 @@ from time import (
 )
 
 from src.synapse.exceptions import exit_handler
+from src.synapse.message import telegram_send_message
 from src.synapse.logger import log_arbitrage
 from src.synapse.interface import args
-from src.synapse.variables import time_format
+from src.synapse.variables import (
+    time_format,
+    CHAT_ID_ALERTS_FILTER,
+)
 from src.synapse.common import (
     parse_args,
     calculate_workers,
-    arbitrage_alert,
+    check_arbitrage,
+    dict_complement_b,
 )
 
 
@@ -42,22 +47,23 @@ if args.screen:
     workers = calculate_workers(info)
 
     loop_counter = 1
-    old_arbitrages = {}
+    old_arbs = {}
     while True:
         start = perf_counter()
         arguments = parse_args(info)
 
         with ThreadPoolExecutor(max_workers=workers) as pool:
-            results = pool.map(arbitrage_alert, arguments, timeout=90)
+            results = pool.map(check_arbitrage, arguments, timeout=90)
 
-        arbs = [result for result in results]
-        new_arbitrages = {arb['id']: arb['arbitrage'] for arb in arbs}
-        Z
-        
-        old_arbitrages = deepcopy(new_arbitrages)
+        new_arbs = {arb['id']: arb['message'] for arb in results if arb}
 
-        message = f"Loop {loop_counter} executed in {(perf_counter() - start):,.2f} secs"
-        log_arbitrage.info(message)
+        found_arbs = dict_complement_b(old_arbs, new_arbs)
+        for arb_msg in found_arbs.values():
+            telegram_send_message(arb_msg, telegram_chat_id=CHAT_ID_ALERTS_FILTER)
+
+        old_arbs = deepcopy(new_arbs)
+
+        log_arbitrage.info(f"Loop {loop_counter} executed in {(perf_counter() - start):,.2f} secs")
 
         sleep(10)
         loop_counter += 1

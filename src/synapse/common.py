@@ -1,13 +1,15 @@
 from datetime import datetime
 from itertools import permutations
 from typing import List
+from hashlib import sha256
 
-from src.synapse.api import get_bridge_output
 from src.synapse.message import telegram_send_message
+from src.synapse.api import get_bridge_output
 from src.synapse.logger import log_arbitrage
 from src.synapse.variables import (
     time_format,
     network_ids,
+    CHAT_ID_ALERTS_ALL
 )
 
 
@@ -57,13 +59,29 @@ def calculate_workers(schema: dict) -> int:
     return workers
 
 
-def arbitrage_alert(arguments: List) -> dict or None:
+def dict_complement_b(old_dict: dict, new_dict: dict,) -> dict:
     """
-    Queries bridge swap output and if arbitrage > min then alerts for the highest arbitrage via Telegram.
+    Compares dictionary A & B and returns the relative complement of A in B.
+    Basically returns a dictionary of all members in B that are not in A, as in Venn's diagrams.
+
+    :param old_dict: dictionary A
+    :param new_dict: dictionary B
+    :returns: Python Dictionary
+    """
+
+    return {k: new_dict[k]
+            for k in new_dict
+            if k not in old_dict}
+
+
+def check_arbitrage(arguments: List) -> dict or None:
+    """
+    Queries bridge swap output and if arbitrage > min_arb then returns a dict with hashed id and
+    constructed message to send.
 
     :param arguments: List of all network arguments in format:
     [10, 'USDC', [100, 1100, 100], [6, 1, 'USDC'], [6, 10, 'USDC']]
-    :return: None
+    :return: Dictionary with id and message
     """
     min_arbitrage, coin, *func_args = arguments
 
@@ -89,13 +107,18 @@ def arbitrage_alert(arguments: List) -> dict or None:
 
         message = f"{timestamp}\n" \
                   f"Sell {amount:,} {token_in} {network_in} -> {network_out}\n" \
-                  f"\t--->Arbitrage: <a href='https://synapseprotocol.com'>{arbitrage:,} {token_out}</a>"
+                  f"--->Arbitrage: <a href='https://synapseprotocol.com'>{arbitrage:,} {token_out}</a>"
 
         ter_msg = f"Sell {amount:,} {token_in} {network_in} -> {network_out}; " \
                   f"--->Arbitrage: {arbitrage:,} {token_out}"
 
-        telegram_send_message(message)
+        telegram_send_message(message, telegram_chat_id=CHAT_ID_ALERTS_ALL)
         log_arbitrage.info(ter_msg)
         print(ter_msg)
 
-        return {"id": network_in + network_in, "arbitrage": arbitrage}
+        arb_id = str(network_in) + str(network_out) + str(arbitrage)
+        arb_id_bytes = bytes(str(arb_id), encoding='utf8')
+        hashed_id = sha256(arb_id_bytes).hexdigest()
+
+        return {"id": hashed_id, "message": message,
+                "networks": str(network_in) + str(network_out), "arbitrage": arbitrage}
