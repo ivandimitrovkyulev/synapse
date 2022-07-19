@@ -47,7 +47,7 @@ if args.screen:
         arguments = parse_args(info)
 
         with ThreadPoolExecutor(max_workers=workers) as pool:
-            pool.map(arbitrage_alert, arguments, timeout=60)
+            pool.map(arbitrage_alert, arguments, timeout=90)
 
         sleep(10)
 
@@ -55,6 +55,5 @@ if args.screen:
         message = f"Loop {loop_counter} executed in {(end - start):,.2f} secs"
 
         log_arbitrage.info(message)
-        print(message)
 
         loop_counter += 1
