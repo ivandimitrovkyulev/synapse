@@ -2,6 +2,7 @@ import os
 import sys
 import json
 
+from copy import deepcopy
 from pprint import pprint
 from atexit import register
 from datetime import datetime
@@ -41,19 +42,22 @@ if args.screen:
     workers = calculate_workers(info)
 
     loop_counter = 1
+    old_arbitrages = {}
     while True:
         start = perf_counter()
-
         arguments = parse_args(info)
 
         with ThreadPoolExecutor(max_workers=workers) as pool:
-            pool.map(arbitrage_alert, arguments, timeout=90)
+            results = pool.map(arbitrage_alert, arguments, timeout=90)
 
-        sleep(10)
+        arbs = [result for result in results]
+        new_arbitrages = {arb['id']: arb['arbitrage'] for arb in arbs}
+        Z
+        
+        old_arbitrages = deepcopy(new_arbitrages)
 
-        end = perf_counter()
-        message = f"Loop {loop_counter} executed in {(end - start):,.2f} secs"
-
+        message = f"Loop {loop_counter} executed in {(perf_counter() - start):,.2f} secs"
         log_arbitrage.info(message)
 
+        sleep(10)
         loop_counter += 1

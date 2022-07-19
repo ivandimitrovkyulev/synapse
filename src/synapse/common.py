@@ -57,7 +57,7 @@ def calculate_workers(schema: dict) -> int:
     return workers
 
 
-def arbitrage_alert(arguments: List) -> None:
+def arbitrage_alert(arguments: List) -> dict or None:
     """
     Queries bridge swap output and if arbitrage > min then alerts for the highest arbitrage via Telegram.
 
@@ -97,3 +97,5 @@ def arbitrage_alert(arguments: List) -> None:
         telegram_send_message(message)
         log_arbitrage.info(ter_msg)
         print(ter_msg)
+
+        return {"id": network_in + network_in, "arbitrage": arbitrage}
