@@ -5,17 +5,19 @@ import json
 from pprint import pprint
 from atexit import register
 from datetime import datetime
-from multiprocessing.dummy import Pool
+from concurrent.futures import ThreadPoolExecutor
 from time import (
     sleep,
     perf_counter,
 )
 
 from src.synapse.exceptions import exit_handler
+from src.synapse.logger import log_arbitrage
 from src.synapse.interface import args
 from src.synapse.variables import time_format
 from src.synapse.common import (
     parse_args,
+    calculate_workers,
     arbitrage_alert,
 )
 
@@ -36,15 +38,23 @@ pprint(info)
 
 if args.screen:
 
+    workers = calculate_workers(info)
+
+    loop_counter = 1
     while True:
         start = perf_counter()
 
         arguments = parse_args(info)
 
-        with Pool(os.cpu_count()) as pool:
-            pool.map(arbitrage_alert, arguments)
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            pool.map(arbitrage_alert, arguments, timeout=60)
 
         sleep(10)
 
         end = perf_counter()
-        print(f"Loop executed in: {(end - start):,}")
+        message = f"Loop {loop_counter} executed in {(end - start):,.2f} secs"
+
+        log_arbitrage.info(message)
+        print(message)
+
+        loop_counter += 1

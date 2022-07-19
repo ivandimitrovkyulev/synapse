@@ -37,6 +37,26 @@ def parse_args(schema: dict) -> List[list]:
     return args
 
 
+def calculate_workers(schema: dict) -> int:
+    """
+    Calculates total number of unique network queries (50k USDC ETH -> BSC).
+
+    :param schema: Dictionary with input information
+    :return: Number of queries
+    """
+    workers = 0
+    for coin in schema:
+        ranges = schema[coin]['swap_amount']
+        range_count = len([i for i in range(*ranges)])
+
+        networks = schema[coin]['networks']
+        network_count = len(list(permutations(networks, 2)))
+
+        workers += network_count * range_count
+
+    return workers
+
+
 def arbitrage_alert(arguments: List) -> None:
     """
     Queries bridge swap output and if arbitrage > min then alerts for the highest arbitrage via Telegram.
@@ -71,7 +91,7 @@ def arbitrage_alert(arguments: List) -> None:
                   f"Sell {amount:,} {token_in} {network_in} -> {network_out}\n" \
                   f"\t--->Arbitrage: <a href='https://synapseprotocol.com'>{arbitrage:,} {token_out}</a>"
 
-        ter_msg = f"Sell {amount:,} {token_in} {network_in} -> {network_out}\n" \
+        ter_msg = f"Sell {amount:,} {token_in} {network_in} -> {network_out}; " \
                   f"--->Arbitrage: {arbitrage:,} {token_out}"
 
         telegram_send_message(message)
