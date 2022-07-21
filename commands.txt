@@ -3,4 +3,4 @@ var="$(cat input.json)"
 docker run --name="synapse" -it "eu.gcr.io/hip-orbit-347017/synapse" python3 main.py -s "$var"
 
 # docker cp synapse:/synapse/logs/error.log .
-# docker cp synapse:/synapse/logs/arbitrage .
+# docker cp synapse:/synapse/logs/arbitrage.log .
