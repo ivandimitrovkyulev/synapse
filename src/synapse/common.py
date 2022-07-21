@@ -9,7 +9,7 @@ from src.synapse.logger import log_arbitrage
 from src.synapse.variables import (
     time_format,
     network_ids,
-    CHAT_ID_ALERTS_ALL
+    CHAT_ID_ALERTS,
 )
 
 
@@ -134,7 +134,7 @@ def check_arbitrage(arguments: List) -> dict or None:
                   f"--->Arbitrage: {arbitrage:,} {token_out}"
 
         # Send arbitrage to ALL alerts channel and log
-        telegram_send_message(message, telegram_chat_id=CHAT_ID_ALERTS_ALL)
+        telegram_send_message(message, telegram_chat_id=CHAT_ID_ALERTS)
         log_arbitrage.info(ter_msg)
         print(ter_msg)
 

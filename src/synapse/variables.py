@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 # Get env variables
 TOKEN = os.getenv("TOKEN")
-CHAT_ID_ALERTS_ALL = os.getenv("CHAT_ID_ALERTS_ALL")
+CHAT_ID_ALERTS = os.getenv("CHAT_ID_ALERTS")
 CHAT_ID_ALERTS_FILTER = os.getenv("CHAT_ID_ALERTS_FILTER")
 CHAT_ID_DEBUG = os.getenv("CHAT_ID_DEBUG")
 

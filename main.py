@@ -45,6 +45,7 @@ pprint(info)
 if args.screen:
 
     workers = calculate_workers(info)
+    print(f"Screening {workers} different number of network configurations...")
 
     loop_counter = 1
     old_arbs = {}

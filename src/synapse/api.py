@@ -66,7 +66,7 @@ def check_max_arb(all_arbs: dict, min_diff: int = 5) -> tuple:
 
 
 def get_bridge_output(amounts: Iterable, network_in: Iterable, network_out: Iterable,
-                      max_retries: int = 2, timeout: float = 0.5) -> tuple or None:
+                      max_retries: int = 3, timeout: float = 3) -> tuple or None:
     """
     Queries https://synapseprotocol.com for swap amount for a cross-chain bridge transaction.
 
