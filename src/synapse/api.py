@@ -97,24 +97,28 @@ def get_bridge_output(amounts: Iterable, network_in: Iterable, network_out: Iter
 
         try:
             response = session.get(api, params=payload, timeout=timeout)
-            message = response.json()
-
-            # Get amount out and calculate arbitrage
-            amount_out = int(message['amountToReceive']) / (10 ** decimals_out)
-            arbitrage = amount_out - amount
-            # Add arb to arbs dictionary
-            all_arbs[arbitrage] = amount
-            break
-
-        except ConnectionError as e:
-            log_error.warning(f"'ConnectionError' - "
-                              f"{name_in} --> {name_out}, {token_in} -> {token_out}")
+        except ConnectionError:
+            log_error.warning(f"'ConnectionError' - {name_in} --> {name_out}, {token_in} -> {token_out}")
             # If response not returned break for loop
             break
+
+        message = response.json()
+        try:
+            amount_out = message['amountToReceive']
+        except KeyError:
+            log_error.warning(f"'ResponseError' - {message} - {name_in} --> {name_out}, {token_in} -> {token_out}")
+            # If response not returned break for loop
+            break
+
+        # Calculate arbitrage
+        amount_out = int(amount_out) / (10 ** decimals_out)
+        arbitrage = amount_out - amount
+        # Add arb to arbs' dictionary
+        all_arbs[arbitrage] = amount
+        break
 
     if len(all_arbs) > 0:
         # Return max arbitrage
         return check_max_arb(all_arbs)
-
     else:
         return None
