@@ -74,6 +74,27 @@ def dict_complement_b(old_dict: dict, new_dict: dict,) -> dict:
             if k not in old_dict}
 
 
+def hash_arb_data(network_in: str, network_out: str, arbitrage: float, rounding: int = 0) -> str:
+    """
+    Returns a str hash of (network_in + network_out + arbitrage).\n
+    For example 'EthereumFantom256.1321' -> 'zynt2r6z7wugnfzhui...fwyfzm78mar4wz'
+
+    :param network_in: Network sending from
+    :param network_out: Network sending to
+    :param arbitrage: Arbitrage amount
+    :param rounding: Rounding precision
+    :return: String of hashed data
+    """
+    arbitrage = round(arbitrage, rounding)
+
+    arb_id = str(network_in) + str(network_out) + str(arbitrage)
+    arb_id_bytes = bytes(str(arb_id), encoding='utf8')
+
+    hashed_id = sha256(arb_id_bytes).hexdigest()
+
+    return hashed_id
+
+
 def check_arbitrage(arguments: List) -> dict or None:
     """
     Queries bridge swap output and if arbitrage > min_arb then returns a dict with hashed id and
@@ -112,13 +133,13 @@ def check_arbitrage(arguments: List) -> dict or None:
         ter_msg = f"Sell {amount:,} {token_in} {network_in} -> {network_out}; " \
                   f"--->Arbitrage: {arbitrage:,} {token_out}"
 
+        # Send arbitrage to ALL alerts channel and log
         telegram_send_message(message, telegram_chat_id=CHAT_ID_ALERTS_ALL)
         log_arbitrage.info(ter_msg)
         print(ter_msg)
 
-        arb_id = str(network_in) + str(network_out) + str(arbitrage)
-        arb_id_bytes = bytes(str(arb_id), encoding='utf8')
-        hashed_id = sha256(arb_id_bytes).hexdigest()
+        # Hash id to compare arbs later
+        id_hash = hash_arb_data(network_in, network_out, arbitrage)
 
-        return {"id": hashed_id, "message": message,
+        return {"id": id_hash, "message": message,
                 "networks": str(network_in) + str(network_out), "arbitrage": arbitrage}

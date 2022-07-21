@@ -57,13 +57,14 @@ if args.screen:
 
         new_arbs = {arb['id']: arb['message'] for arb in results if arb}
 
+        # Send filtered arbs only
         found_arbs = dict_complement_b(old_arbs, new_arbs)
         for arb_msg in found_arbs.values():
             telegram_send_message(arb_msg, telegram_chat_id=CHAT_ID_ALERTS_FILTER)
 
+        # Save current arbs to compare later; then sleep
         old_arbs = deepcopy(new_arbs)
-
-        log_arbitrage.info(f"Loop {loop_counter} executed in {(perf_counter() - start):,.2f} secs")
-
         sleep(10)
+
+        log_arbitrage.info(f"Loop {loop_counter} executed in {(perf_counter() - start):,.2f} secs.")
         loop_counter += 1

@@ -26,6 +26,8 @@ network_ids = {
     "250": "Fantom",
     "288": "Boba",
     "1088": "Metis",
+    "1284": "Moonbeam",
+    "1285": "Moonriver",
     "42161": "Arbitrum",
     "43114": "Avalanche",
     "1313161554": "Aurora",

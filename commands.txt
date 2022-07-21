@@ -1,5 +1,6 @@
 # For screening
 var="$(cat input.json)"
-docker run -it <image-id> python3 main.py -s "$var"
+docker run --name="synapse" -it "eu.gcr.io/hip-orbit-347017/synapse" python3 main.py -s "$var"
 
-docker cp <container-id>:/synapse/logs/error.log .
+# docker cp synapse:/synapse/logs/error.log .
+# docker cp synapse:/synapse/logs/arbitrage .

@@ -1,6 +1,6 @@
 import logging
 
-from src.synapse.variables import log_format
+from src.synapse.variables import log_format, time_format
 
 
 def logger_setup(
@@ -17,7 +17,7 @@ def logger_setup(
     :returns: An instance of the Logger class
     """
     # Set up formatting style
-    formatter = logging.Formatter(log_format)
+    formatter = logging.Formatter(log_format, datefmt=time_format)
 
     handler = logging.FileHandler(filename)
     handler.setFormatter(formatter)

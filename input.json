@@ -3,17 +3,18 @@
         "swap_amount": [20000, 120000, 20000],
         "arbitrage": 25,
         "networks": {
-            "Ethereum":  {"decimals": 6,  "chain_id": 1,     "token": "USDC"},
-            "Optimism":  {"decimals": 6,  "chain_id": 10,    "token": "USDC"},
-            "Fantom":    {"decimals": 6,  "chain_id": 250,   "token": "USDC"},
-            "Arbitrum":  {"decimals": 6,  "chain_id": 42161, "token": "USDC"},
-            "Avalanche": {"decimals": 6,  "chain_id": 43114, "token": "USDC"},
-            "Binance":   {"decimals": 18, "chain_id": 56,    "token": "USDC"},
-            "Polygon":   {"decimals": 6,  "chain_id": 137,   "token": "USDC"}
+            "Ethereum":  {"decimals": 6,  "chain_id": 1,          "token": "USDC"},
+            "Optimism":  {"decimals": 6,  "chain_id": 10,         "token": "USDC"},
+            "Fantom":    {"decimals": 6,  "chain_id": 250,        "token": "USDC"},
+            "Arbitrum":  {"decimals": 6,  "chain_id": 42161,      "token": "USDC"},
+            "Avalanche": {"decimals": 6,  "chain_id": 43114,      "token": "USDC"},
+            "Binance":   {"decimals": 18, "chain_id": 56,         "token": "USDC"},
+            "Polygon":   {"decimals": 6,  "chain_id": 137,        "token": "USDC"},
+            "Aurora":    {"decimals": 6,  "chain_id": 1313161554, "token": "USDC"}
         }
     },
     "ETH": {
-        "swap_amount": [10, 110, 20],
+        "swap_amount": [20, 120, 20],
         "arbitrage": 0.02,
         "networks": {
             "Ethereum":  {"decimals": 18, "chain_id": 1,     "token": "ETH"},
