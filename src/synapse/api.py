@@ -3,6 +3,7 @@ import requests
 from typing import Iterable
 from requests import ConnectionError
 from requests.adapters import HTTPAdapter
+from json.decoder import JSONDecodeError
 
 from src.synapse.logger import log_error
 from src.synapse.variables import network_ids
@@ -102,11 +103,17 @@ def get_bridge_output(amounts: Iterable, network_in: Iterable, network_out: Iter
             # If response not returned break for loop
             break
 
-        message = response.json()
+        try:
+            message = response.json()
+        except JSONDecodeError:
+            log_error.warning(f"'JSONError' {response.status_code} - {response.url}")
+            break
+
         try:
             amount_out = message['amountToReceive']
         except KeyError:
-            log_error.warning(f"'ResponseError' - {message} - {name_in} --> {name_out}, {token_in} -> {token_out}")
+            log_error.warning(f"'ResponseError' {response.status_code} - {message} - "
+                              f"{name_in} --> {name_out}, {token_in} -> {token_out}")
             # If response not returned break for loop
             break
 
