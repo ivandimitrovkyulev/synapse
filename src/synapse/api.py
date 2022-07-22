@@ -1,8 +1,8 @@
 import requests
 
 from typing import Iterable
-from requests import ConnectionError
 from requests.adapters import HTTPAdapter
+from requests.exceptions import ConnectionError
 from json.decoder import JSONDecodeError
 
 from src.synapse.logger import log_error
@@ -122,7 +122,6 @@ def get_bridge_output(amounts: Iterable, network_in: Iterable, network_out: Iter
         arbitrage = amount_out - amount
         # Add arb to arbs' dictionary
         all_arbs[arbitrage] = amount
-        break
 
     if len(all_arbs) > 0:
         # Return max arbitrage
