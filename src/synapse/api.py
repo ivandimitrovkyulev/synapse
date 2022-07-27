@@ -22,7 +22,7 @@ def get_token_networks(token: str) -> list:
     token = token.upper()
 
     url = api.format(token=token)
-    response = requests.get(url).json()
+    response = requests.get(url, timeout=10).json()
 
     return response
 
@@ -38,7 +38,7 @@ def get_bridgeable_tokens(chain: str) -> list:
     chain = chain.upper()
 
     url = api.format(chain=chain)
-    response = requests.get(url).json()
+    response = requests.get(url, timeout=10).json()
 
     return response
 

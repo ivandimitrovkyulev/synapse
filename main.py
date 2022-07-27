@@ -41,6 +41,8 @@ timestamp = datetime.now().astimezone().strftime(time_format)
 print(f"{timestamp} - Started screening:\n")
 pprint(info)
 
+sleep_time = info['settings']['sleep_time']
+info.pop('settings')
 
 if args.screen:
 
@@ -65,7 +67,9 @@ if args.screen:
 
         # Save current arbs to compare later; then sleep
         old_arbs = deepcopy(new_arbs)
-        sleep(10)
+        sleep(sleep_time)
 
-        log_arbitrage.info(f"Loop {loop_counter} executed in {(perf_counter() - start):,.2f} secs.")
+        terminal_mesg = f"Loop {loop_counter} executed in {(perf_counter() - start):,.2f} secs."
+        log_arbitrage.info(terminal_mesg)
+        print(terminal_mesg)
         loop_counter += 1

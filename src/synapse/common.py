@@ -124,7 +124,7 @@ def check_arbitrage(arguments: List) -> dict or None:
         network_out = network_ids[str(chain_id_out)]
         timestamp = datetime.now().astimezone().strftime(time_format)
 
-        arbitrage = round(arbitrage, int(decimals_in / 3))
+        arbitrage = round(arbitrage, int(decimals_in // 3))
 
         message = f"{timestamp}\n" \
                   f"Sell {amount:,} {token_in} {network_in} -> {network_out}\n" \
