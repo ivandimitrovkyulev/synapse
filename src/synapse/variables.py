@@ -2,7 +2,7 @@
 Set up program variables.
 """
 import os
-import re
+from re import compile
 from dotenv import load_dotenv
 
 
@@ -15,7 +15,7 @@ CHAT_ID_DEBUG = os.getenv("CHAT_ID_DEBUG")
 
 
 time_format = "%Y-%m-%d %H:%M:%S, %Z"
-time_format_regex = re.compile("\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}, [A-Za-z]*")
+time_format_regex = compile("\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}, [A-Za-z]*")
 
 log_format = "%(asctime)s - %(levelname)s - %(message)s"
 
