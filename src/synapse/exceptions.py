@@ -33,4 +33,4 @@ def exit_handler(
     # Send debug message in Telegram and print in terminal
     telegram_send_message(message, telegram_chat_id=telegram_chat_id, debug=True)
 
-    print(message)
+    print(f"{timestamp}\n{program_name} has stopped. {info}")
