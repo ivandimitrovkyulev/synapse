@@ -9,6 +9,10 @@ from src.synapse.logger import log_error
 from src.synapse.variables import network_ids
 
 
+session = requests.Session()
+session.mount("https://", HTTPAdapter(max_retries=2))
+
+
 def get_token_networks(token: str) -> list:
     """
     Returns all available networks for https://synapseprotocol.com for a given token.
@@ -67,14 +71,13 @@ def check_max_arb(all_arbs: dict, min_diff: int = 5) -> tuple:
 
 
 def get_bridge_output(amounts: Iterable, network_in: Iterable, network_out: Iterable,
-                      max_retries: int = 3, timeout: float = 3) -> tuple or None:
+                      timeout: float = 3) -> tuple or None:
     """
     Queries https://synapseprotocol.com for swap amount for a cross-chain bridge transaction.
 
     :param amounts: Amount ranges to swap
     :param network_in: Origin chain iterable with decimals, chain_id & token_name
     :param network_out: Target chain iterable with decimals, chain_id & token_name
-    :param max_retries: Max number of times to retry GET request
     :param timeout: Max number of secs to wait per request
     :return: Tuple of max_arb & amount swapped in
     """
@@ -92,9 +95,6 @@ def get_bridge_output(amounts: Iterable, network_in: Iterable, network_out: Iter
 
         payload = {'fromChain': chain_id_in, 'toChain': chain_id_out,
                    'fromToken': token_in, 'toToken': token_out, 'amountFrom': amount_in}
-
-        session = requests.Session()
-        session.mount("https://", HTTPAdapter(max_retries=max_retries))
 
         try:
             response = session.get(api, params=payload, timeout=timeout)

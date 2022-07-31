@@ -46,8 +46,8 @@ info.pop('settings')
 
 if args.screen:
 
-    workers = calculate_workers(info)
-    print(f"Screening {workers} different network configurations...")
+    configurations = calculate_workers(info)
+    print(f"Screening {configurations} different network configurations...")
 
     loop_counter = 1
     old_arbs = {}
@@ -55,7 +55,7 @@ if args.screen:
         start = perf_counter()
         arguments = parse_args(info)
 
-        with ThreadPoolExecutor(max_workers=workers) as pool:
+        with ThreadPoolExecutor(max_workers=configurations) as pool:
             results = pool.map(check_arbitrage, arguments, timeout=90)
 
         new_arbs = {arb['id']: arb['message'] for arb in results if arb}
@@ -69,7 +69,8 @@ if args.screen:
         old_arbs = deepcopy(new_arbs)
         sleep(sleep_time)
 
-        terminal_mesg = f"Loop {loop_counter} executed in {(perf_counter() - start):,.2f} secs."
+        timestamp = datetime.now().astimezone().strftime(time_format)
+        terminal_mesg = f"{timestamp}: Loop {loop_counter} executed in {(perf_counter() - start):,.2f} secs."
         log_arbitrage.info(terminal_mesg)
         print(terminal_mesg)
         loop_counter += 1

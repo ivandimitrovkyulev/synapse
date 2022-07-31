@@ -1,6 +1,6 @@
 {   
     "settings": {
-        "sleep_time": 3
+        "sleep_time": 5
     },
     "USDC": {
         "swap_amount": [20000, 120000, 20000],
