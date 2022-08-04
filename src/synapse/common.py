@@ -77,7 +77,7 @@ def dict_complement_b(old_dict: dict, new_dict: dict,) -> dict:
 def hash_arb_data(network_in: str, network_out: str, arbitrage: float, rounding: int = 0) -> str:
     """
     Returns a str hash of (network_in + network_out + arbitrage).\n
-    For example 'EthereumFantom256.1321' -> 'zynt2r6z7wugnfzhui...fwyfzm78mar4wz'
+    For example 'EthereumFantom256.39' -> 'zynt2r6z7wugnfzhui...fwyfzm78mar4wz'
 
     :param network_in: Network sending from
     :param network_out: Network sending to
@@ -97,7 +97,7 @@ def hash_arb_data(network_in: str, network_out: str, arbitrage: float, rounding:
 
 def check_arbitrage(arguments: List) -> dict or None:
     """
-    Queries bridge swap output and if arbitrage > min_arb then returns a dict with hashed id and
+    Queries bridge swap output and if arbitrage > min_arb alerts and then returns a dict with hashed id and
     constructed message to send.
 
     :param arguments: List of all network arguments in format:
