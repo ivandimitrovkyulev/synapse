@@ -2,7 +2,6 @@ import os
 import sys
 import json
 
-from copy import deepcopy
 from pprint import pprint
 from atexit import register
 from datetime import datetime
@@ -13,18 +12,13 @@ from time import (
 )
 
 from src.synapse.exceptions import exit_handler
-from src.synapse.message import telegram_send_message
 from src.synapse.logger import log_arbitrage
 from src.synapse.interface import args
-from src.synapse.variables import (
-    time_format,
-    CHAT_ID_ALERTS_FILTER,
-)
+from src.synapse.variables import time_format
 from src.synapse.common import (
     parse_args,
     calculate_workers,
     check_arbitrage,
-    dict_complement_b,
 )
 
 
