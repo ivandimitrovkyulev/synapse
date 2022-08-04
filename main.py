@@ -50,7 +50,6 @@ if args.screen:
     print(f"Screening {configurations} different network configurations...")
 
     loop_counter = 1
-    old_arbs = {}
     while True:
         start = perf_counter()
         arguments = parse_args(info)
@@ -58,15 +57,6 @@ if args.screen:
         with ThreadPoolExecutor(max_workers=configurations) as pool:
             results = pool.map(check_arbitrage, arguments, timeout=90)
 
-        new_arbs = {arb['id']: arb['message'] for arb in results if arb}
-
-        # Send filtered arbs only
-        found_arbs = dict_complement_b(old_arbs, new_arbs)
-        for arb_msg in found_arbs.values():
-            telegram_send_message(arb_msg, telegram_chat_id=CHAT_ID_ALERTS_FILTER)
-
-        # Save current arbs to compare later; then sleep
-        old_arbs = deepcopy(new_arbs)
         sleep(sleep_time)
 
         timestamp = datetime.now().astimezone().strftime(time_format)
