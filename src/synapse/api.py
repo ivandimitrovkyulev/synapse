@@ -1,4 +1,7 @@
-from typing import Iterable
+from typing import (
+    Iterable,
+    List,
+)
 from urllib3 import Retry
 from json.decoder import JSONDecodeError
 
@@ -75,12 +78,12 @@ def check_max_arb(all_arbs: dict, min_diff: int = 5) -> tuple:
     return max_arb, all_arbs[max_arb]
 
 
-def get_bridge_output(amounts: Iterable, network_in: Iterable, network_out: Iterable,
+def get_bridge_output(amounts: List, network_in: Iterable, network_out: Iterable,
                       timeout: float = 3) -> tuple or None:
     """
-    Queries https://synapseprotocol.com for swap amount for a cross-chain bridge transaction.
+    Queries https://synapseprotocol.com for swap bridge output for a cross-chain transaction.
 
-    :param amounts: Amount ranges to swap
+    :param amounts: List of amounts to swap
     :param network_in: Origin chain iterable with decimals, chain_id & token_name
     :param network_out: Target chain iterable with decimals, chain_id & token_name
     :param timeout: Max number of secs to wait per request
@@ -94,8 +97,9 @@ def get_bridge_output(amounts: Iterable, network_in: Iterable, network_out: Iter
     name_out = network_ids[str(chain_id_out)]
 
     all_arbs = {}
-    for amount in range(*amounts):
+    for amount in amounts:
 
+        # Add zeros to be a valid synapse api argument
         amount_in = amount * (10 ** decimals_in)
 
         payload = {'fromChain': chain_id_in, 'toChain': chain_id_out,

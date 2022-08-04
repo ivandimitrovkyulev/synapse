@@ -2,6 +2,7 @@ from datetime import datetime
 from itertools import permutations
 from typing import List
 from hashlib import sha256
+from tabulate import tabulate
 
 from src.synapse.message import telegram_send_message
 from src.synapse.api import get_bridge_output
@@ -15,16 +16,23 @@ from src.synapse.variables import (
 
 def parse_args(schema: dict) -> List[list]:
     """
-    Parses input schema and returns a list of arguments ready to be parsed to a function.
-    Returns the following scheme: [10, 'USDC', [100, 1100, 100], [6, 1, 'USDC'], [6, 10, 'USDC']]
+    Parses input schema and returns a list of arguments ready to be passed to a function.
+
+    >>> arguments = parse_args(schema)
+    >>> print(arguments)
+    [[10, 'USDC', [100, 200, 500], [6, 1, 'USDC'], [6, 10, 'USDC']]...]
+      ^     ^     ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾   ‾‾‾‾‾‾‾‾‾‾‾‾‾   ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+     arb   name        amounts         taken_A          token_B
+                                  (deci, id, name)  (deci, id, name)
+    >>>
 
     :param schema: Dictionary with input information
-    :return: List of all argument lists
+    :return: List of argument lists
     """
 
     args = []
     for coin in schema:
-        amount = schema[coin]['swap_amount']
+        amounts = schema[coin]['swap_amount']
         networks = schema[coin]['networks']
         arbitrage = schema[coin]['arbitrage']
 
@@ -33,10 +41,36 @@ def parse_args(schema: dict) -> List[list]:
         pairs = list(permutations(networks, 2))
 
         for pair in pairs:
-            temp_list = [arbitrage, coin, amount, pair[0], pair[1]]
+            temp_list = [arbitrage, coin, amounts, pair[0], pair[1]]
             args.append(temp_list)
 
     return args
+
+
+def print_start_message(arguments: List[list]) -> None:
+    """Prints script start message of all network configurations.
+
+    :param arguments: List of argument lists. Output of func paser_args
+    """
+
+    table = []
+    for arg in arguments:
+        min_arb = arg[0]
+        token = arg[1]
+        amounts = arg[2]
+        from_network_id = str(arg[3][1])
+        from_network = network_ids[from_network_id]
+        to_network_id = str(arg[4][1])
+        to_network = network_ids[to_network_id]
+        swap_amounts = [f"{int(amount / 1000)}k" if amount > 1000 else amount for amount in amounts]
+
+        line = [token, from_network, to_network, swap_amounts, min_arb]
+        table.append(line)
+
+    columns = ["Token", "From", "To", "SwapAmounts", "MinArb"]
+
+    print(tabulate(table, headers=columns, showindex=True,
+                   tablefmt="fancy_grid", numalign="left", stralign="left", colalign="left"))
 
 
 def calculate_workers(schema: dict) -> int:
@@ -49,7 +83,7 @@ def calculate_workers(schema: dict) -> int:
     workers = 0
     for coin in schema:
         ranges = schema[coin]['swap_amount']
-        range_count = len([i for i in range(*ranges)])
+        range_count = len(ranges)
 
         networks = schema[coin]['networks']
         network_count = len(list(permutations(networks, 2)))

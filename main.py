@@ -19,6 +19,7 @@ from src.synapse.common import (
     parse_args,
     calculate_workers,
     check_arbitrage,
+    print_start_message,
 )
 
 
@@ -39,14 +40,15 @@ sleep_time = info['settings']['sleep_time']
 info.pop('settings')
 
 if args.screen:
-
+    arguments = parse_args(info)
     configurations = calculate_workers(info)
-    print(f"Screening {configurations} different network configurations...")
+
+    print(f"\nScreening {configurations} different network configurations...\n")
+    print_start_message(arguments)
 
     loop_counter = 1
     while True:
         start = perf_counter()
-        arguments = parse_args(info)
 
         with ThreadPoolExecutor(max_workers=configurations) as pool:
             results = pool.map(check_arbitrage, arguments, timeout=90)
