@@ -32,4 +32,5 @@ def logger_setup(
 
 # Configure logging settings
 log_error = logger_setup("error", "logs/error.log")
+log_telegram = logger_setup("telegram", "logs/telegram.log")
 log_arbitrage = logger_setup("arbitrage", "logs/arbitrage.log")

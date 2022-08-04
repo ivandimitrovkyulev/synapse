@@ -1,16 +1,21 @@
-import requests
-
 from typing import Iterable
+from urllib3 import Retry
+from json.decoder import JSONDecodeError
+
 from requests.adapters import HTTPAdapter
 from requests.exceptions import ConnectionError
-from json.decoder import JSONDecodeError
+from requests import Session
 
 from src.synapse.logger import log_error
 from src.synapse.variables import network_ids
 
 
-session = requests.Session()
-session.mount("https://", HTTPAdapter(max_retries=2))
+# Set up and configure requests session
+session = Session()
+retry_strategy = Retry(total=2, status_forcelist=[429, 500, 502, 503, 504])
+adapter = HTTPAdapter(max_retries=retry_strategy)
+session.mount("https://", adapter)
+session.mount("http://", adapter)
 
 
 def get_token_networks(token: str) -> list:
@@ -26,7 +31,7 @@ def get_token_networks(token: str) -> list:
     token = token.upper()
 
     url = api.format(token=token)
-    response = requests.get(url, timeout=10).json()
+    response = session.get(url, timeout=10).json()
 
     return response
 
@@ -42,7 +47,7 @@ def get_bridgeable_tokens(chain: str) -> list:
     chain = chain.upper()
 
     url = api.format(chain=chain)
-    response = requests.get(url, timeout=10).json()
+    response = session.get(url, timeout=10).json()
 
     return response
 
@@ -99,14 +104,14 @@ def get_bridge_output(amounts: Iterable, network_in: Iterable, network_out: Iter
         try:
             response = session.get(api, params=payload, timeout=timeout)
         except ConnectionError:
-            log_error.warning(f"'ConnectionError' - {name_in} --> {name_out}, {token_in} -> {token_out}")
+            log_error.critical(f"'ConnectionError' - {name_in} --> {name_out}, {token_in} -> {token_out}")
             # If response not returned break for loop
             break
 
         try:
             message = response.json()
         except JSONDecodeError:
-            log_error.warning(f"'JSONError' {response.status_code} - {response.url}")
+            log_error.critical(f"'JSONError' {response.status_code} - {response.url}")
             break
 
         try:
