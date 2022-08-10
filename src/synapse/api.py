@@ -107,8 +107,8 @@ def get_bridge_output(amounts: List, network_in: Iterable, network_out: Iterable
 
         try:
             response = session.get(api, params=payload, timeout=timeout)
-        except ConnectionError:
-            log_error.critical(f"'ConnectionError' - {name_in} --> {name_out}, {token_in} -> {token_out}")
+        except ConnectionError as e:
+            log_error.critical(f"'ConnectionError' - {e} - {name_in} --> {name_out}, {token_in} -> {token_out}")
             # If response not returned break for loop
             break
 
