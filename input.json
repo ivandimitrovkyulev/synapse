@@ -17,7 +17,7 @@
         }
     },
     "ETH": {
-        "swap_amount": [2, 5, 10, 15],
+        "swap_amount": [30, 50, 70],
         "arbitrage": 0.02,
         "networks": {
             "Ethereum":  {"decimals": 18, "chain_id": 1,     "token": "ETH"},
