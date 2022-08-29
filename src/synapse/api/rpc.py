@@ -9,8 +9,8 @@ from requests.adapters import HTTPAdapter
 from requests.exceptions import ConnectionError
 from requests import Session
 
-from src.synapse.logger import log_error
-from src.synapse.variables import network_ids
+from src.synapse.common.logger import log_error
+from src.synapse.common.variables import network_ids
 
 
 # Set up and configure requests session

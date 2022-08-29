@@ -35,3 +35,20 @@ network_ids = {
     "1313161554": "Aurora",
     "1666600000": "Harmony",
 }
+
+network_names = {
+    "Ethereum": '1',
+    "Optimism": '10',
+    "Cronos": '25',
+    "Binance": '56',
+    "Polygon": '137',
+    "Fantom": '250',
+    "Boba": '288',
+    "Metis": '1088',
+    "Moonbeam": '1284',
+    "Moonriver": '1285',
+    "Arbitrum": '42162',
+    "Avalanche": '43114',
+    "Aurora": '1313161554',
+    "Harmony": '1666600000',
+}

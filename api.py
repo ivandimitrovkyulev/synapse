@@ -11,11 +11,11 @@ from time import (
     perf_counter,
 )
 
-from src.synapse.exceptions import exit_handler
-from src.synapse.logger import log_arbitrage
 from src.synapse.interface import args
-from src.synapse.variables import time_format
-from src.synapse.common import (
+from src.synapse.common.exceptions import exit_handler
+from src.synapse.common.logger import log_arbitrage
+from src.synapse.common.variables import time_format
+from src.synapse.common.helpers import (
     parse_args,
     calculate_workers,
     check_arbitrage,

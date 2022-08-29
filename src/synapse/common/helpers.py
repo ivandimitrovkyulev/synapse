@@ -4,10 +4,10 @@ from typing import List
 from hashlib import sha256
 from tabulate import tabulate
 
-from src.synapse.message import telegram_send_message
-from src.synapse.api import get_bridge_output
-from src.synapse.logger import log_arbitrage
-from src.synapse.variables import (
+from src.synapse.common.message import telegram_send_message
+from src.synapse.api.rpc import get_bridge_output
+from src.synapse.common.logger import log_arbitrage
+from src.synapse.common.variables import (
     time_format,
     network_ids,
     CHAT_ID_ALERTS,

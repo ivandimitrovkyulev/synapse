@@ -11,9 +11,9 @@ from requests import (
     Session,
     Response,
 )
-from src.synapse.logger import log_telegram
+from src.synapse.common.logger import log_telegram
 
-from src.synapse.variables import (
+from src.synapse.common.variables import (
     TOKEN,
     CHAT_ID_ALERTS,
     CHAT_ID_DEBUG,
