@@ -22,7 +22,7 @@ RUN poetry config virtualenvs.create false \
 
 # Copy all project files
 COPY src ./src
-CMD ["mkdir logs"]
+COPY logs ./logs
 COPY api.py .env .
 
 CMD ["pwd"]
