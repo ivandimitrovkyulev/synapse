@@ -1,66 +1,51 @@
 import os
 import sys
 import json
+from pprint import pprint
 
 from time import sleep, perf_counter
 from datetime import datetime
-from itertools import product
 from atexit import register
 
-from src.synapse.driver.driver import chrome_driver
-from src.synapse.common.exceptions import exit_handler_driver
+from src.synapse.common.exceptions import exit_handler
 from src.synapse.common.message import telegram_send_message
-from src.synapse.web.price_query import query_hop
+from src.synapse.web.price_query import query_synapse
 from src.synapse.common.variables import time_format
+from src.synapse.common.helpers import (
+    parse_args_web,
+    calculate_workers,
+    print_start_message,
+)
 
 
 if len(sys.argv) != 2:
     sys.exit(f"Usage: python3 {os.path.basename(__file__)} contracts.json\n")
 
-info = json.loads(sys.argv[-1])
-
 # Send telegram debug message if program terminates
 program_name = os.path.abspath(os.path.basename(__file__))
-register(exit_handler_driver, chrome_driver, program_name)
+register(exit_handler, program_name)
+
+# Fetch variables
+info = json.loads(sys.argv[-1])
 timestamp = datetime.now().astimezone().strftime(time_format)
+print(f"{timestamp} - Started screening:\n")
+pprint(info)
 
-tokens = tuple(token for token in info.keys() if token != 'settings')
-networks = ("polygon", "gnosis", "optimism", "arbitrum")
-in_network = "ethereum"
 sleep_time = info['settings']['sleep_time']
+info.pop('settings')
 
-token_netw_pairs = list(product(tokens, networks))
+arguments = parse_args_web(info)
 
-args = [(chrome_driver, info[pair[0]], in_network, pair[1], pair[0], len(tokens))
-        for pair in token_netw_pairs]
-
-network_msgs = []
-for i, pair in enumerate(token_netw_pairs):
-    token, out_network = pair
-    ranges, arb, decimal = info[token].values()
-    network_msgs.append(f"{i+1}. Min_arb: {arb} {token}, range{[i for i in range(*ranges)]}, "
-                        f"{in_network} -> {out_network}\n")
-
-print(f"{timestamp} - Started screening https://app.hop.exchange with the following networks:")
-print("".join(network_msgs))
+print(f"\nScreening {calculate_workers(info)} different network configurations...\n")
+print_start_message(arguments)
 
 telegram_send_message(f"✅ SYNAPSE_WEB has started.")
 
 while True:
     start = perf_counter()
 
-    token = args[0][4]
-    for arg in args:
-        # Refresh only if token changes
-        if token != arg[4]:
-            # Refresh this way! and update token
-            chrome_driver.get("https://www.google.com")
-            token = arg[4]
-
-        query_hop(*arg)
-
-    # Refresh this way! one more time to prepare for new while loop
-    chrome_driver.get("https://www.google.com")
+    for arg in arguments:
+        query_synapse(*arg)
 
     # Sleep and print loop info
     sleep(sleep_time)

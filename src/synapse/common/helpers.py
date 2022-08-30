@@ -4,12 +4,13 @@ from typing import List
 from hashlib import sha256
 from tabulate import tabulate
 
-from src.synapse.common.message import telegram_send_message
 from src.synapse.api.rpc import get_bridge_output
+from src.synapse.driver.driver import chrome_driver
+from src.synapse.common.message import telegram_send_message
 from src.synapse.common.logger import log_arbitrage
 from src.synapse.common.variables import (
     time_format,
-    network_ids,
+    network_names,
     CHAT_ID_ALERTS,
 )
 
@@ -47,6 +48,34 @@ def parse_args(schema: dict) -> List[list]:
     return args
 
 
+def parse_args_web(schema: dict) -> List[list]:
+    """
+    Parses input schema and returns a list of arguments ready to be passed to a function.
+
+    >>> arguments = parse_args_web(schema)
+    >>> print(arguments)
+    [[chrome_driver, [10,000, 20,000, 50,000], 30, '1', '10']...]
+
+    >>>
+
+    :param schema: Dictionary with input information
+    :return: List of argument lists
+    """
+
+    args = []
+    for coin in schema:
+        amounts = schema[coin]['swap_amount']
+        networks = schema[coin]['networks']
+        min_arbitrage = schema[coin]['arbitrage']
+
+        pairs = [['Ethereum', network] for network in networks]
+
+        for pair in pairs:
+            args.append([chrome_driver, amounts, min_arbitrage, pair[0], pair[1], coin])
+
+    return args
+
+
 def print_start_message(arguments: List[list]) -> None:
     """Prints script start message of all network configurations.
 
@@ -55,16 +84,17 @@ def print_start_message(arguments: List[list]) -> None:
 
     table = []
     for arg in arguments:
-        min_arb = arg[0]
-        token = arg[1]
-        amounts = arg[2]
-        from_network_id = str(arg[3][1])
-        from_network = network_ids[from_network_id]
-        to_network_id = str(arg[4][1])
-        to_network = network_ids[to_network_id]
+        amounts = arg[1]
+        min_arb = arg[2]
+        src_network_name = arg[3]
+        dest_network_name = arg[4]
+        token = arg[5]
+
+        src_network_id = network_names[src_network_name]
+        dest_network_id = network_names[dest_network_name]
         swap_amounts = [f"{int(amount / 1000)}k" if amount > 1000 else amount for amount in amounts]
 
-        line = [token, from_network, to_network, swap_amounts, min_arb]
+        line = [token, src_network_name, dest_network_name, swap_amounts, min_arb]
         table.append(line)
 
     columns = ["Token", "From", "To", "SwapAmounts", "MinArb"]

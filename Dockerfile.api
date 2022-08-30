@@ -13,7 +13,7 @@ ENV PYTHONFAULTHANDLER=1 \
 RUN pip install "poetry==$POETRY_VERSION"
 
 # Copy only requirements to cache them in docker layer
-WORKDIR ./synapse
+WORKDIR ./synapse_api
 COPY poetry.lock pyproject.toml .
 
 # Project init
@@ -22,7 +22,7 @@ RUN poetry config virtualenvs.create false \
 
 # Copy all project files
 COPY src ./src
-COPY logs ./logs
-COPY main.py .env .
+CMD ["mkdir logs"]
+COPY api.py .env .
 
 CMD ["pwd"]

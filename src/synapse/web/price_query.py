@@ -22,23 +22,27 @@ from src.synapse.common.variables import (
 )
 
 
-def query_hop(
+def query_synapse(
         driver: Chrome,
-        data: dict,
-        src_network: str = "ethereum",
-        dest_network: str = "arbitrum",
+        amounts: list,
+        min_arbitrage: float,
+        src_network_name: str = "Ethereum",
+        dest_network_name: str = "Optimism",
         token_name: str = "USDC",
 ) -> None:
     """
     Queries Hop Bridge and checks for arbitrage opportunity.
 
     :param driver: Chrome webdriver instance
-    :param data: Data info with amounts to sell and min. arbitrage
-    :param src_network: Blockchain to sell from
-    :param dest_network: Blockchain to receive from
+    :param amounts: List of amounts to swap
+    :param min_arbitrage: Minimum arbitrage to alert for
+    :param src_network_name: Chain ID source
+    :param dest_network_name: Chain ID destination
     :param token_name: Token code, eg. USDC
     """
-    dest_network_id = network_names[dest_network]
+    src_network_id = network_names[src_network_name]
+    dest_network_id = network_names[dest_network_name]
+
     url = f"https://synapseprotocol.com/?inputCurrency={token_name}&outputCurrency={token_name}" \
           f"&outputChain={dest_network_id}"
 
@@ -50,9 +54,9 @@ def query_hop(
         return None
 
     all_arbs = {}
-    for amount in range(*data['range']):
+    for amount in amounts:
 
-        in_xpath = "//*[@id='root']/div/div[3]/div/div/div[2]/div[2]/div[2]/div/input"
+        in_xpath = "//*[@id='root']/div[2]/main/main/div/main/div/div/div[1]/div/div[2]/div[1]/div[1]/div[2]/div/input"
         try:
             in_field = WebDriverWait(driver, 10).until(ec.element_to_be_clickable(
                 (By.XPATH, in_xpath)))
@@ -69,8 +73,8 @@ def query_hop(
         # Fill in swap amount
         in_field.send_keys(amount)
 
-        timeout = time.time() + 30
-        out_xpath = "//*[@id='root']/div/div[3]/div/div/div[4]/div[2]/div[2]/div/input"
+        timeout = time.time() + 20
+        out_xpath = "//*[@id='root']/div[2]/main/main/div/main/div/div/div[1]/div/div[2]/div[1]/div[2]/div[2]/div/input"
         while True:
             out_field = driver.find_element(By.XPATH, out_xpath)
             received = out_field.get_attribute("value")
@@ -81,22 +85,19 @@ def query_hop(
         try:
             received = float(received.replace(",", ""))
         except ValueError as e:
-            log_error.warning(f"ReceivedError - {token_name}, {src_network} -> {dest_network} - {e}")
+            log_error.warning(f"ReceivedError - {token_name}, {src_network_name} -> {dest_network_name} - {e}")
             return None
 
         # Calculate arbitrage
         arbitrage = received - amount
 
-        decimals = int(data['decimals'])
-        arbitrage = round(arbitrage, int(decimals // 3))
-
         timestamp = datetime.now().astimezone().strftime(time_format)
         message = f"{timestamp}\n" \
-                  f"Sell {amount:,} {token_name} {src_network} -> {dest_network}\n" \
-                  f"\t-->Arbitrage: <a href='{url}'>{arbitrage:,} {token_name}</a>\n"
+                  f"Sell {amount:,} {token_name} {src_network_name} -> {dest_network_name}\n" \
+                  f"\t-->Arbitrage: <a href='{url}'>{arbitrage:,.2f} {token_name}</a>\n"
 
-        ter_msg = f"Sell {amount:,} {token_name} {src_network} -> {dest_network}\n" \
-                  f"\t-->Arbitrage: {arbitrage:,} {token_name}\n"
+        ter_msg = f"Sell {amount:,} {token_name} {src_network_name} -> {dest_network_name}\n" \
+                  f"\t-->Arbitrage: {arbitrage:,.2f} {token_name}\n"
 
         # Record all arbs to select the highest later
         all_arbs[arbitrage] = [message, ter_msg]
@@ -106,7 +107,7 @@ def query_hop(
     else:
         return None
 
-    if data['range'][0] > highest_arb >= data['min_arb']:
+    if amounts[0] > highest_arb >= min_arbitrage:
         message = all_arbs[highest_arb][0]
         ter_msg = all_arbs[highest_arb][1]
         telegram_send_message(message)

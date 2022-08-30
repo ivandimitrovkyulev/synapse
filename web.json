@@ -1,0 +1,28 @@
+{   
+    "settings": {
+        "sleep_time": 1
+    },
+    "USDC": {
+        "swap_amount": [5000, 10000, 25000, 50000, 75000, 100000, 150000, 200000],
+        "arbitrage": 30,
+        "networks": {
+            "Optimism":  {"decimals": 6,  "chain_id": 10,         "token": "USDC"},
+            "Fantom":    {"decimals": 6,  "chain_id": 250,        "token": "USDC"},
+            "Arbitrum":  {"decimals": 6,  "chain_id": 42161,      "token": "USDC"},
+            "Avalanche": {"decimals": 6,  "chain_id": 43114,      "token": "USDC"},
+            "Binance":   {"decimals": 18, "chain_id": 56,         "token": "USDC"},
+            "Polygon":   {"decimals": 6,  "chain_id": 137,        "token": "USDC"},
+            "Aurora":    {"decimals": 6,  "chain_id": 1313161554, "token": "USDC"}
+        }
+    },
+    "ETH": {
+        "swap_amount": [30, 50, 70],
+        "arbitrage": 0.02,
+        "networks": {
+            "Optimism":  {"decimals": 18, "chain_id": 10,    "token": "WETH"},
+            "Fantom":    {"decimals": 18, "chain_id": 250,   "token": "FTM_ETH"},
+            "Arbitrum":  {"decimals": 18, "chain_id": 42161, "token": "WETH"},
+            "Avalanche": {"decimals": 18, "chain_id": 43114, "token": "WETH_E"}
+        }
+    }
+}

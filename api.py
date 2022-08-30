@@ -13,6 +13,7 @@ from time import (
 
 from src.synapse.interface import args
 from src.synapse.common.exceptions import exit_handler
+from src.synapse.common.message import telegram_send_message
 from src.synapse.common.logger import log_arbitrage
 from src.synapse.common.variables import time_format
 from src.synapse.common.helpers import (
@@ -45,6 +46,8 @@ if args.screen:
 
     print(f"\nScreening {configurations} different network configurations...\n")
     print_start_message(arguments)
+
+    telegram_send_message(f"✅ SYNAPSE_API has started.")
 
     loop_counter = 1
     while True:
