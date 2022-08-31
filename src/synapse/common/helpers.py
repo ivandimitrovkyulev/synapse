@@ -67,11 +67,12 @@ def parse_args_web(schema: dict) -> List[list]:
         amounts = schema[coin]['swap_amount']
         networks = schema[coin]['networks']
         min_arbitrage = schema[coin]['arbitrage']
+        max_wait_time = schema['max_wait_time']
 
         pairs = [['Ethereum', network] for network in networks]
 
         for pair in pairs:
-            args.append([chrome_driver, amounts, min_arbitrage, pair[0], pair[1], coin])
+            args.append([chrome_driver, amounts, min_arbitrage, pair[0], pair[1], coin, max_wait_time])
 
     return args
 

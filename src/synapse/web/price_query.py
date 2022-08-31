@@ -29,6 +29,7 @@ def query_synapse(
         src_network_name: str = "Ethereum",
         dest_network_name: str = "Optimism",
         token_name: str = "USDC",
+        max_wait_time: int = 15,
 ) -> None:
     """
     Queries Hop Bridge and checks for arbitrage opportunity.
@@ -39,6 +40,7 @@ def query_synapse(
     :param src_network_name: Chain ID source
     :param dest_network_name: Chain ID destination
     :param token_name: Token code, eg. USDC
+    :param max_wait_time: Maximum number of seconds to wait for driver element
     """
     src_network_id = network_names[src_network_name]
     dest_network_id = network_names[dest_network_name]
@@ -58,11 +60,12 @@ def query_synapse(
 
         in_xpath = "//*[@id='root']/div[2]/main/main/div/main/div/div/div[1]/div/div[2]/div[1]/div[1]/div[2]/div/input"
         try:
-            in_field = WebDriverWait(driver, 10).until(ec.element_to_be_clickable(
+            in_field = WebDriverWait(driver, max_wait_time).until(ec.element_to_be_clickable(
                 (By.XPATH, in_xpath)))
 
         except TimeoutException:
-            log_error.warning(f"Element {in_xpath} not located.")
+            log_error.warning(f"ElementError {src_network_name} -> {dest_network_name}, {token_name}. "
+                              f"{in_xpath} not located. ")
             return None
 
         # Clear the entire field
