@@ -42,7 +42,6 @@ def query_synapse(
     :param token_name: Token code, eg. USDC
     :param max_wait_time: Maximum number of seconds to wait for driver element
     """
-    src_network_id = network_names[src_network_name]
     dest_network_id = network_names[dest_network_name]
 
     url = f"https://synapseprotocol.com/?inputCurrency={token_name}&outputCurrency={token_name}" \
@@ -57,6 +56,7 @@ def query_synapse(
 
     all_arbs = {}
     for amount in amounts:
+        amount = float(amount)
 
         in_xpath = "//*[@id='root']/div[2]/main/main/div/main/div/div/div[1]/div/div[2]/div[1]/div[1]/div[2]/div/input"
         try:
@@ -95,22 +95,20 @@ def query_synapse(
         arbitrage = received - amount
 
         timestamp = datetime.now().astimezone().strftime(time_format)
-        message = f"{timestamp}\n" \
-                  f"Sell {amount:,} {token_name} {src_network_name} -> {dest_network_name}\n" \
+        message = f"{timestamp} - Synapse Web\n" \
+                  f"Sell {amount:,} {token_name} for {received:,.2f}; {src_network_name} -> {dest_network_name}\n" \
                   f"\t-->Arbitrage: <a href='{url}'>{arbitrage:,.2f} {token_name}</a>\n"
 
-        ter_msg = f"Sell {amount:,} {token_name} {src_network_name} -> {dest_network_name}\n" \
+        ter_msg = f"Sell {amount:,} {token_name} for {received:,.2f}; {src_network_name} -> {dest_network_name}\n" \
                   f"\t-->Arbitrage: {arbitrage:,.2f} {token_name}\n"
 
         # Record all arbs to select the highest later
-        all_arbs[arbitrage] = [message, ter_msg]
+        if arbitrage >= min_arbitrage:
+            all_arbs[arbitrage] = [message, ter_msg]
 
     if len(all_arbs) > 0:
         highest_arb = max(all_arbs)
-    else:
-        return None
 
-    if amounts[0] > highest_arb >= min_arbitrage:
         message = all_arbs[highest_arb][0]
         ter_msg = all_arbs[highest_arb][1]
         telegram_send_message(message)
@@ -118,3 +116,6 @@ def query_synapse(
         log_arbitrage.info(ter_msg)
         timestamp = datetime.now().astimezone().strftime(time_format)
         print(f"{timestamp} - {ter_msg}")
+
+    else:
+        return None

@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import (
     Iterable,
     List,
@@ -9,8 +10,17 @@ from requests.adapters import HTTPAdapter
 from requests.exceptions import ConnectionError
 from requests import Session
 
-from src.synapse.common.logger import log_error
+from src.synapse.api.helpers import hash_arb_data
 from src.synapse.common.variables import network_ids
+from src.synapse.common.message import telegram_send_message
+from src.synapse.common.logger import (
+    log_error,
+    log_arbitrage,
+)
+from src.synapse.common.variables import (
+    time_format,
+    CHAT_ID_ALERTS,
+)
 
 
 # Set up and configure requests session
@@ -130,10 +140,61 @@ def get_bridge_output(amounts: List, network_in: Iterable, network_out: Iterable
         amount_out = int(amount_out) / (10 ** decimals_out)
         arbitrage = amount_out - amount
         # Add arb to arbs' dictionary
-        all_arbs[arbitrage] = amount
+        all_arbs[arbitrage] = (amount, amount_out)
 
     if len(all_arbs) > 0:
         # Return max arbitrage
         return check_max_arb(all_arbs)
     else:
         return None
+
+
+def check_arbitrage(arguments: List) -> dict or None:
+    """
+    Queries bridge swap output and if arbitrage > min_arb alerts and then returns a dict with hashed id and
+    constructed message to send.
+
+    :param arguments: List of all network arguments in format:
+    [10, 'USDC', [100, 1100, 100], [6, 1, 'USDC'], [6, 10, 'USDC']]
+    :return: Dictionary with id and message
+    """
+    min_arbitrage, coin, *func_args = arguments
+
+    # Query swap amount out
+    data = get_bridge_output(*func_args)
+
+    if not data:
+        return None
+
+    arbitrage = data[0]
+    amount_in = data[1][0]
+    amount_out = data[1][1]
+
+    # Execute only if swap_amount is Not None, eg. get request was successful
+    if arbitrage >= min_arbitrage:
+
+        decimals_in, chain_id_in, token_in = arguments[3]
+        decimals_out, chain_id_out, token_out = arguments[4]
+        network_in = network_ids[str(chain_id_in)]
+        network_out = network_ids[str(chain_id_out)]
+        timestamp = datetime.now().astimezone().strftime(time_format)
+
+        arbitrage = round(arbitrage, int(decimals_in // 3))
+
+        message = f"{timestamp} - Synapse API\n" \
+                  f"Sell {amount_in:,} {token_in} for {amount_out:,.2f} {token_out}, {network_in} -> {network_out}\n" \
+                  f"--->Arbitrage: <a href='https://synapseprotocol.com'>{arbitrage:,.2f} {token_out}</a>"
+
+        ter_msg = f"Sell {amount_in:,} {token_in} for {amount_out:,.2f} {token_out}, {network_in} -> {network_out}; " \
+                  f"--->Arbitrage: {arbitrage:,} {token_out}"
+
+        # Send arbitrage to ALL alerts channel and log
+        telegram_send_message(message, telegram_chat_id=CHAT_ID_ALERTS)
+        log_arbitrage.info(ter_msg)
+        print(ter_msg)
+
+        # Hash id to compare arbs later
+        id_hash = hash_arb_data(network_in, network_out, arbitrage)
+
+        return {"id": id_hash, "message": message,
+                "networks": str(network_in) + str(network_out), "arbitrage": arbitrage}

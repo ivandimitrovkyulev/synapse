@@ -1,6 +1,9 @@
 import logging
 
-from src.synapse.common.variables import log_format, time_format
+from src.synapse.common.variables import (
+    log_format,
+    time_format,
+)
 
 
 def logger_setup(

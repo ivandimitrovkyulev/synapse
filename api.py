@@ -12,16 +12,16 @@ from time import (
 )
 
 from src.synapse.interface import args
-from src.synapse.common.exceptions import exit_handler
-from src.synapse.common.message import telegram_send_message
-from src.synapse.common.logger import log_arbitrage
-from src.synapse.common.variables import time_format
-from src.synapse.common.helpers import (
+from src.synapse.api.rpc import check_arbitrage
+from src.synapse.api.exceptions import exit_handler
+from src.synapse.api.helpers import (
     parse_args,
-    calculate_workers,
-    check_arbitrage,
     print_start_message,
 )
+
+from src.synapse.common.helpers import calculate_workers
+from src.synapse.common.message import telegram_send_message
+from src.synapse.common.variables import time_format
 
 
 if len(sys.argv) != 3:
@@ -60,6 +60,5 @@ if args.screen:
 
         timestamp = datetime.now().astimezone().strftime(time_format)
         terminal_mesg = f"{timestamp}: Loop {loop_counter} executed in {(perf_counter() - start):,.2f} secs."
-        log_arbitrage.info(terminal_mesg)
         print(terminal_mesg)
         loop_counter += 1
