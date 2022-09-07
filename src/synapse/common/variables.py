@@ -30,6 +30,8 @@ time_format_regex = compile(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}, [A-Za-z]*")
 
 log_format = "%(asctime)s - %(levelname)s - %(message)s"
 
+stablecoins = ['USDC', 'USDT', 'DAI']
+
 network_ids = {
     "1": "Ethereum",
     "10": "Optimism",

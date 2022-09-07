@@ -16,6 +16,7 @@ from src.synapse.common.logger import (
 )
 from src.synapse.common.variables import (
     time_format,
+    stablecoins,
     http_session,
     CHAT_ID_ALERTS,
     CHAT_ID_SPECIAL,
@@ -135,7 +136,11 @@ def get_bridge_output(amounts: List, network_in: Iterable, network_out: Iterable
 
     if len(all_arbs) > 0:
         # Return max arbitrage
-        return check_max_arb(all_arbs)
+        if token_in in stablecoins:
+            return check_max_arb(all_arbs)
+        else:
+            max_arb = max(all_arbs)
+            return max_arb, all_arbs[max_arb]
     else:
         return None
 
