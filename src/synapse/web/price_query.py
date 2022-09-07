@@ -19,6 +19,8 @@ from src.synapse.common.logger import (
 from src.synapse.common.variables import (
     time_format,
     network_names,
+    CHAT_ID_ALERTS,
+    CHAT_ID_SPECIAL,
 )
 
 
@@ -29,6 +31,7 @@ def query_synapse(
         src_network_name: str = "Ethereum",
         dest_network_name: str = "Optimism",
         token_name: str = "USDC",
+        special_chat: dict = {},
         max_wait_time: int = 15,
 ) -> None:
     """
@@ -41,6 +44,7 @@ def query_synapse(
     :param dest_network_name: Chain ID destination
     :param token_name: Token code, eg. USDC
     :param max_wait_time: Maximum number of seconds to wait for driver element
+    :param special_chat: Send specific info, if empty ignore
     """
     dest_network_id = network_names[dest_network_name]
 
@@ -104,14 +108,21 @@ def query_synapse(
 
         # Record all arbs to select the highest later
         if arbitrage >= min_arbitrage:
-            all_arbs[arbitrage] = [message, ter_msg]
+            all_arbs[arbitrage] = [message, ter_msg, amount]
 
     if len(all_arbs) > 0:
         highest_arb = max(all_arbs)
 
         message = all_arbs[highest_arb][0]
         ter_msg = all_arbs[highest_arb][1]
-        telegram_send_message(message)
+        amount_in = all_arbs[highest_arb][2]
+
+        telegram_send_message(message, telegram_chat_id=CHAT_ID_ALERTS)
+
+        # If special chat required, send telegram msg to it
+        if special_chat:
+            if float(special_chat['max_swap_amount']) >= float(amount_in) and token_name.upper() in special_chat['coins']:
+                telegram_send_message(message, telegram_chat_id=CHAT_ID_SPECIAL)
 
         log_arbitrage.info(ter_msg)
         timestamp = datetime.now().astimezone().strftime(time_format)

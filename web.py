@@ -35,7 +35,6 @@ pprint(info)
 
 sleep_time = info['settings']['sleep_time']
 max_wait_time = info['settings']['max_wait_time']
-info.pop('settings')
 
 arguments = parse_args_web(info)
 

@@ -35,23 +35,24 @@ def parse_args_web(schema: dict) -> List[list]:
 
     >>> arguments = parse_args_web(schema)
     >>> print(arguments)
-    [[driver, [10,000, 20,000, 50,000], 30, '1', '10']...]
+    [[driver, [10,000, 20,000, 50,000], 30, '1', '10'], {"max_swap_amount": 10000, "coins": ["USDC"]}...]
 
     >>>
 
     :param schema: Dictionary with input information
     :return: List of argument lists
     """
+    special_chat = schema['settings']['special_chat']
 
     args = []
-    for coin in schema:
-        amounts = schema[coin]['swap_amount']
-        networks = schema[coin]['networks']
-        min_arbitrage = schema[coin]['arbitrage']
+    for coin in schema['coins']:
+        amounts = schema['coins'][coin]['swap_amount']
+        networks = schema['coins'][coin]['networks']
+        min_arbitrage = schema['coins'][coin]['arbitrage']
 
         pairs = [['Ethereum', network] for network in networks]
 
         for pair in pairs:
-            args.append([chrome_driver, amounts, min_arbitrage, pair[0], pair[1], coin])
+            args.append([chrome_driver, amounts, min_arbitrage, pair[0], pair[1], coin, special_chat])
 
     return args

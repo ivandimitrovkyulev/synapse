@@ -10,9 +10,9 @@ def parse_args(schema: dict) -> List[list]:
 
     >>> arguments = parse_args(schema)
     >>> print(arguments)
-    [[10, 'USDC', [100, 200, 500], [6, 1, 'USDC'], [6, 10, 'USDC'], {"swap_amount": 10000}]...]
-      ^     ^     ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾   ‾‾‾‾‾‾‾‾‾‾‾‾‾   ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾   ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
-     arb   name        amounts         taken_A          token_B             special_chat
+    [[10, 'USDC', [100, 200, 500], [6, 1, 'USDC'], [6, 10, 'USDC'], {"max_swap_amount": 10000, "coins": ["USDC"]}]...]
+      ^     ^     ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾   ‾‾‾‾‾‾‾‾‾‾‾‾‾   ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾   ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+     arb   name        amounts         taken_A          token_B                      special_chat
                                   (deci, id, name)  (deci, id, name)
     >>>
 
