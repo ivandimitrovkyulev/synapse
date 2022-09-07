@@ -10,28 +10,29 @@ def parse_args(schema: dict) -> List[list]:
 
     >>> arguments = parse_args(schema)
     >>> print(arguments)
-    [[10, 'USDC', [100, 200, 500], [6, 1, 'USDC'], [6, 10, 'USDC']]...]
-      ^     ^     ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾   ‾‾‾‾‾‾‾‾‾‾‾‾‾   ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
-     arb   name        amounts         taken_A          token_B
+    [[10, 'USDC', [100, 200, 500], [6, 1, 'USDC'], [6, 10, 'USDC'], {"swap_amount": 10000}]...]
+      ^     ^     ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾   ‾‾‾‾‾‾‾‾‾‾‾‾‾   ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾   ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+     arb   name        amounts         taken_A          token_B             special_chat
                                   (deci, id, name)  (deci, id, name)
     >>>
 
     :param schema: Dictionary with input information
     :return: List of argument lists
     """
+    special_chat = schema['settings']['special_chat']
 
     args = []
-    for coin in schema:
-        amounts = schema[coin]['swap_amount']
-        networks = schema[coin]['networks']
-        arbitrage = schema[coin]['arbitrage']
+    for coin in schema['coins']:
+        amounts = schema['coins'][coin]['swap_amount']
+        networks = schema['coins'][coin]['networks']
+        arbitrage = schema['coins'][coin]['arbitrage']
 
         networks = [[networks[i]['decimals'], networks[i]['chain_id'], networks[i]['token']]
                     for i in networks]
         pairs = list(permutations(networks, 2))
 
         for pair in pairs:
-            temp_list = [arbitrage, coin, amounts, pair[0], pair[1]]
+            temp_list = [arbitrage, coin, amounts, pair[0], pair[1], special_chat]
             args.append(temp_list)
 
     return args

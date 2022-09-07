@@ -5,14 +5,14 @@ import json
 from pprint import pprint
 from atexit import register
 from datetime import datetime
-from concurrent.futures import ThreadPoolExecutor
 from time import (
     sleep,
     perf_counter,
 )
+from concurrent.futures import ThreadPoolExecutor
 
 from src.synapse.interface import args
-from src.synapse.api.rpc import check_arbitrage
+from src.synapse.api.rpc import alert_arbitrage
 from src.synapse.api.exceptions import exit_handler
 from src.synapse.api.helpers import (
     parse_args,
@@ -38,7 +38,6 @@ print(f"{timestamp} - Started screening:\n")
 pprint(info)
 
 sleep_time = info['settings']['sleep_time']
-info.pop('settings')
 
 if args.screen:
     arguments = parse_args(info)
@@ -54,7 +53,7 @@ if args.screen:
         start = perf_counter()
 
         with ThreadPoolExecutor(max_workers=configurations) as pool:
-            results = pool.map(check_arbitrage, arguments, timeout=90)
+            results = pool.map(lambda p: alert_arbitrage(*p), arguments, timeout=20)
 
         sleep(sleep_time)
 

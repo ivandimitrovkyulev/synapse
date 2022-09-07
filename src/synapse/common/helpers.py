@@ -8,12 +8,13 @@ def calculate_workers(schema: dict) -> int:
     :param schema: Dictionary with input information
     :return: Number of queries
     """
+
     workers = 0
-    for coin in schema:
-        ranges = schema[coin]['swap_amount']
+    for coin in schema['coins']:
+        ranges = schema['coins'][coin]['swap_amount']
         range_count = len(ranges)
 
-        networks = schema[coin]['networks']
+        networks = schema['coins'][coin]['networks']
         network_count = len(list(permutations(networks, 2)))
 
         workers += network_count * range_count

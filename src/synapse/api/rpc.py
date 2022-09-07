@@ -3,12 +3,9 @@ from typing import (
     Iterable,
     List,
 )
-from urllib3 import Retry
 from json.decoder import JSONDecodeError
 
-from requests.adapters import HTTPAdapter
 from requests.exceptions import ConnectionError
-from requests import Session
 
 from src.synapse.api.helpers import hash_arb_data
 from src.synapse.common.variables import network_ids
@@ -19,16 +16,10 @@ from src.synapse.common.logger import (
 )
 from src.synapse.common.variables import (
     time_format,
+    http_session,
     CHAT_ID_ALERTS,
+    CHAT_ID_SPECIAL,
 )
-
-
-# Set up and configure requests session
-session = Session()
-retry_strategy = Retry(total=2, status_forcelist=[429, 500, 502, 503, 504])
-adapter = HTTPAdapter(max_retries=retry_strategy)
-session.mount("https://", adapter)
-session.mount("http://", adapter)
 
 
 def get_token_networks(token: str) -> list:
@@ -44,7 +35,7 @@ def get_token_networks(token: str) -> list:
     token = token.upper()
 
     url = api.format(token=token)
-    response = session.get(url, timeout=10).json()
+    response = http_session.get(url, timeout=10).json()
 
     return response
 
@@ -60,7 +51,7 @@ def get_bridgeable_tokens(chain: str) -> list:
     chain = chain.upper()
 
     url = api.format(chain=chain)
-    response = session.get(url, timeout=10).json()
+    response = http_session.get(url, timeout=10).json()
 
     return response
 
@@ -116,7 +107,7 @@ def get_bridge_output(amounts: List, network_in: Iterable, network_out: Iterable
                    'fromToken': token_in, 'toToken': token_out, 'amountFrom': amount_in}
 
         try:
-            response = session.get(api, params=payload, timeout=timeout)
+            response = http_session.get(api, params=payload, timeout=timeout)
         except ConnectionError as e:
             log_error.critical(f"'ConnectionError' - {e} - {name_in} --> {name_out}, {token_in} -> {token_out}")
             # If response not returned break for loop
@@ -149,32 +140,35 @@ def get_bridge_output(amounts: List, network_in: Iterable, network_out: Iterable
         return None
 
 
-def check_arbitrage(arguments: List) -> dict or None:
+def alert_arbitrage(min_arb: float, coin: str, amounts: list,
+                    network_in: Iterable, network_out: Iterable, special_chat: dict) -> dict or None:
     """
     Queries bridge swap output and if arbitrage > min_arb alerts and then returns a dict with hashed id and
     constructed message to send.
 
-    :param arguments: List of all network arguments in format:
-    [10, 'USDC', [100, 1100, 100], [6, 1, 'USDC'], [6, 10, 'USDC']]
+    :param min_arb: Min required arbitrage
+    :param coin: Token name
+    :param amounts: List of amounts to swap
+    :param network_in: In network details, (decimal, id, name)
+    :param network_out: Out network details, (decimal, id, name)
+    :param special_chat: Send specific info, if empty ignore
     :return: Dictionary with id and message
     """
-    min_arbitrage, coin, *func_args = arguments
 
     # Query swap amount out
-    data = get_bridge_output(*func_args)
+    data = get_bridge_output(amounts, network_in, network_out)
 
     if not data:
         return None
 
     arbitrage = data[0]
-    amount_in = data[1][0]
-    amount_out = data[1][1]
+    amount_in, amount_out = data[1]
 
     # Execute only if swap_amount is Not None, eg. get request was successful
-    if arbitrage >= min_arbitrage:
+    if arbitrage >= min_arb:
 
-        decimals_in, chain_id_in, token_in = arguments[3]
-        decimals_out, chain_id_out, token_out = arguments[4]
+        decimals_in, chain_id_in, token_in = network_in
+        decimals_out, chain_id_out, token_out = network_out
         network_in = network_ids[str(chain_id_in)]
         network_out = network_ids[str(chain_id_out)]
         timestamp = datetime.now().astimezone().strftime(time_format)
@@ -193,8 +187,13 @@ def check_arbitrage(arguments: List) -> dict or None:
         log_arbitrage.info(ter_msg)
         print(ter_msg)
 
+        # If special chat required, send telegram msg to it
+        if special_chat:
+            if float(special_chat['max_swap_amount']) >= float(amount_in) and token_in.upper() in special_chat['coins']:
+                telegram_send_message(message, telegram_chat_id=CHAT_ID_SPECIAL)
+
         # Hash id to compare arbs later
         id_hash = hash_arb_data(network_in, network_out, arbitrage)
 
         return {"id": id_hash, "message": message,
-                "networks": str(network_in) + str(network_out), "arbitrage": arbitrage}
+                "networks": str(network_in) + str(network_out), "arbitrage": arbitrage, "coin": coin}

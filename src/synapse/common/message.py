@@ -1,30 +1,17 @@
+import requests
+
 from time import sleep
 from typing import Optional
 
-from urllib3 import Retry
-from requests.adapters import HTTPAdapter
-from requests.exceptions import (
-    ConnectionError,
-    ReadTimeout,
-)
-from requests import (
-    Session,
-    Response,
-)
-from src.synapse.common.logger import log_telegram
+from requests.exceptions import ConnectionError
 
+from src.synapse.common.logger import log_error
 from src.synapse.common.variables import (
     TOKEN,
     CHAT_ID_ALERTS,
     CHAT_ID_DEBUG,
+    http_session,
 )
-
-
-session = Session()
-retry_strategy = Retry(total=2, status_forcelist=[429, 500, 502, 503, 504])
-adapter = HTTPAdapter(max_retries=retry_strategy)
-session.mount("https://", adapter)
-session.mount("http://", adapter)
 
 
 def telegram_send_message(
@@ -34,7 +21,8 @@ def telegram_send_message(
         telegram_chat_id: Optional[str] = "",
         debug: bool = False,
         timeout: float = 10,
-) -> Response or None:
+        sleep_time: int = 3,
+) -> requests.Response or None:
     """
     Sends a Telegram message to a specified chat.
     Must have a .env file with the following variables:
@@ -49,6 +37,7 @@ def telegram_send_message(
     :param telegram_chat_id: Telegram chat ID for alerts, default is 'CHAT_ID_ALERTS' from .env file
     :param debug: If true sends message to Telegram 'CHAT_ID_DEBUG' chat taken from .env file
     :param timeout: Max secs to wait for POST request
+    :param sleep_time: Time to sleep if Telegram bot clutters
     :return: requests.Response
     """
     telegram_token = str(telegram_token)
@@ -75,21 +64,19 @@ def telegram_send_message(
 
     # send the POST request
     try:
-        # If too many requests, wait for Telegram's rate limit
         counter = 1
+        # If too many requests, wait for Telegram's rate limit
         while True:
-            try:
-                post_request = session.post(url=url, data=payload, timeout=timeout)
+            post_request = http_session.post(url=url, data=payload, timeout=timeout)
 
-                if post_request.json()['ok']:
-                    return post_request
+            if post_request.json()['ok']:
+                return post_request
 
-                sleep(3)
+            log_error.warning(f"'telegram_send_message' - Telegram message not sent, attempt {counter}. "
+                              f"Sleeping for {sleep_time} secs...")
+            counter += 1
+            sleep(sleep_time)
 
-            except ReadTimeout as e:
-                log_telegram.warning(f"'telegram_send_message' - {e} - Attempt: {counter}")
-                counter += 1
-
-    except ConnectionError or ReadTimeout as e:
-        log_telegram.critical(f"'telegram_send_message' - {e} - '{message_text})' was not sent.")
+    except ConnectionError as e:
+        log_error.warning(f"'telegram_send_message' - {e} - '{message_text})' was not sent.")
         return None
