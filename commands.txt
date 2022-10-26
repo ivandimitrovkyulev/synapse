@@ -1,18 +1,14 @@
 ### For screening via APIs
-var="$(cat api.json)"
-docker run --name="synapse_api" --shm-size="2g" -it -d "eu.gcr.io/hip-orbit-347017/synapse_api" python3 api.py -s "$var"
+docker run --name="synapse_api" --shm-size="2g" -it -d "eu.gcr.io/hip-orbit-347017/synapse_api" python3 api.py -s "$(cat api.json)"
 # docker cp synapse_api:/synapse_api/logs/error.log .
-
-# To run docker container checker
+## To run docker container checker
 # docker cp synapse_api:/synapse_api/.env . | chmod go-rw .env
 # nohup python3 container_check.py synapse_api &
 
 
 ### For screening via web scrapper
-var="$(cat web.json)"
-docker run --name="synapse_web" -it -d "eu.gcr.io/hip-orbit-347017/synapse_web" python3 web.py "$var"
+docker run --name="synapse_web" -it -d "eu.gcr.io/hip-orbit-347017/synapse_web" python3 web.py "$(cat web.json)"
 # docker cp synapse_web:/synapse_web/logs/error.log .
-
-# To run docker container checker
+## To run docker container checker
 # docker cp synapse_web:/synapse_web/.env . | chmod go-rw .env
 # nohup python3 container_check.py synapse_web &
