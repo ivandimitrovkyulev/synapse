@@ -2,6 +2,7 @@ from itertools import permutations
 from typing import List
 from hashlib import sha256
 from tabulate import tabulate
+from src.synapse.common.variables import network_ids
 
 
 def parse_args(schema: dict) -> List[list]:
@@ -49,12 +50,23 @@ def print_start_message(arguments: List[list]) -> None:
         min_arb = arg[0]
         token = arg[1]
         amounts = arg[2]
-        src_network_name = arg[3]
-        dest_network_name = arg[4]
+        from_id = str(arg[3][1])
+        to_id = str(arg[4][1])
 
-        swap_amounts = [f"{int(amount / 1000)}k" if amount > 1000 else amount for amount in amounts]
+        try:
+            from_network = network_ids[from_id]
+        except:
+            from_network = arg[3]
 
-        line = [token, src_network_name, dest_network_name, swap_amounts, min_arb]
+        try:
+            to_network = network_ids[to_id]
+        except:
+            to_network = arg[4]
+
+        swap_amounts = [f"{int(amount / 1000)}k" if amount > 1000 else f"{amount}" for amount in amounts]
+        swaps = ", ".join(swap_amounts)
+
+        line = [token, from_network, to_network, swaps, min_arb]
         table.append(line)
 
     columns = ["Token", "From", "To", "SwapAmounts", "MinArb"]

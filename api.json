@@ -1,10 +1,10 @@
 {   
     "settings": {
-        "sleep_time": 5, "special_chat": {"max_swap_amount": 10000, "coins": ["USDC"]}
+        "sleep_time": 7, "special_chat": {"max_swap_amount": 10000, "coins": ["USDC"]}
     },
     "coins": {
         "USDC": {
-            "swap_amount": [5000, 10000, 25000, 50000, 75000, 100000, 150000, 200000],
+            "swap_amount": [8000, 30000, 50000, 75000, 100000, 150000, 200000],
             "arbitrage": 25,
             "networks": {
                 "Ethereum":  {"decimals": 6,  "chain_id": 1,          "token": "USDC"},
@@ -18,7 +18,7 @@
             }
         },
         "ETH": {
-            "swap_amount": [30, 50, 70],
+            "swap_amount": [40, 70],
             "arbitrage": 0.02,
             "networks": {
                 "Ethereum":  {"decimals": 18, "chain_id": 1,     "token": "ETH"},
