@@ -38,6 +38,7 @@ print(f"{timestamp} - Started screening:\n")
 pprint(info)
 
 sleep_time = info['settings']['sleep_time']
+bridge_api = info['settings']['bridge_api']
 
 if args.screen:
     arguments = parse_args(info)

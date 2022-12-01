@@ -80,18 +80,18 @@ def check_max_arb(all_arbs: dict, min_diff: int = 5) -> tuple:
     return max_arb, all_arbs[max_arb]
 
 
-def get_bridge_output(amounts: List, network_in: Iterable, network_out: Iterable,
+def get_bridge_output(bridge_api: str, amounts: List, network_in: Iterable, network_out: Iterable,
                       timeout: float = 3) -> tuple or None:
     """
     Queries https://synapseprotocol.com for swap bridge output for a cross-chain transaction.
 
+    :param bridge_api: Synapse bridge output api
     :param amounts: List of amounts to swap
     :param network_in: Origin chain iterable with decimals, chain_id & token_name
     :param network_out: Target chain iterable with decimals, chain_id & token_name
     :param timeout: Max number of secs to wait per request
     :return: Tuple of max_arb & amount swapped in
     """
-    api = "https://syn-api-dev.herokuapp.com/v1/estimate_bridge_output"
 
     decimals_in, chain_id_in, token_in = network_in
     decimals_out, chain_id_out, token_out = network_out
@@ -108,7 +108,7 @@ def get_bridge_output(amounts: List, network_in: Iterable, network_out: Iterable
                    'fromToken': token_in, 'toToken': token_out, 'amountFrom': amount_in}
 
         try:
-            response = http_session.get(api, params=payload, timeout=timeout)
+            response = http_session.get(bridge_api, params=payload, timeout=timeout)
         except ConnectionError as e:
             log_error.critical(f"'ConnectionError' - {e} - {name_in} --> {name_out}, {token_in} -> {token_out}")
             # If response not returned break for loop
@@ -145,12 +145,13 @@ def get_bridge_output(amounts: List, network_in: Iterable, network_out: Iterable
         return None
 
 
-def alert_arbitrage(min_arb: float, coin: str, amounts: list,
+def alert_arbitrage(bridge_api: str, min_arb: float, coin: str, amounts: list,
                     network_in: Iterable, network_out: Iterable, special_chat: dict) -> dict or None:
     """
     Queries bridge swap output and if arbitrage > min_arb alerts and then returns a dict with hashed id and
     constructed message to send.
 
+    :param bridge_api: Synapse bridge output api
     :param min_arb: Min required arbitrage
     :param coin: Token name
     :param amounts: List of amounts to swap
@@ -161,7 +162,7 @@ def alert_arbitrage(min_arb: float, coin: str, amounts: list,
     """
 
     # Query swap amount out
-    data = get_bridge_output(amounts, network_in, network_out)
+    data = get_bridge_output(bridge_api, amounts, network_in, network_out)
 
     if not data:
         return None

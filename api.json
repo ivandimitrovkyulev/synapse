@@ -1,6 +1,9 @@
 {   
     "settings": {
-        "sleep_time": 7, "special_chat": {"max_swap_amount": 10000, "coins": ["USDC"]}
+        "sleep_time": 7,
+        "special_chat": {"max_swap_amount": 10000, "coins": ["USDC"],
+        "bridge_api": "https://syn-api-x.herokuapp.com/v1/estimate_bridge_output"
+        }
     },
     "coins": {
         "USDC": {

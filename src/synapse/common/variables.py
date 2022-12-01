@@ -17,6 +17,7 @@ CHAT_ID_ALERTS = os.getenv("CHAT_ID_ALERTS")
 CHAT_ID_ALERTS_FILTER = os.getenv("CHAT_ID_ALERTS_FILTER")
 CHAT_ID_SPECIAL = os.getenv("CHAT_ID_SPECIAL")
 CHAT_ID_DEBUG = os.getenv("CHAT_ID_DEBUG")
+ALCHEMY_OP_KEY = os.getenv('ALCHEMY_OP_KEY')
 
 # Set up and configure requests session
 http_session = Session()
