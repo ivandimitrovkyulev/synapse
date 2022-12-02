@@ -11,9 +11,9 @@ def parse_args(schema: dict) -> List[list]:
 
     >>> arguments = parse_args(schema)
     >>> print(arguments)
-    [[10, 'USDC', [100, 200, 500], [6, 1, 'USDC'], [6, 10, 'USDC'], {"max_swap_amount": 10000, "coins": ["USDC"]}]...]
-      ^     ^     ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾   ‾‾‾‾‾‾‾‾‾‾‾‾‾   ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾   ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
-     arb   name        amounts         taken_A          token_B                      special_chat
+    [['api', 10, 'USDC', [100, 200, 500], [6, 1, 'USDC'], [6, 10, 'USDC'], {"max_swap_amount": 10000, "coins": ["USDC"]}]...]
+        ^    ^     ^     ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾   ‾‾‾‾‾‾‾‾‾‾‾‾‾   ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾   ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+       api  arb   name        amounts         taken_A          token_B                      special_chat
                                   (deci, id, name)  (deci, id, name)
     >>>
 
@@ -21,6 +21,7 @@ def parse_args(schema: dict) -> List[list]:
     :return: List of argument lists
     """
     special_chat = schema['settings']['special_chat']
+    bridge_api = schema['settings']['bridge_api']
 
     args = []
     for coin in schema['coins']:
@@ -33,7 +34,7 @@ def parse_args(schema: dict) -> List[list]:
         pairs = list(permutations(networks, 2))
 
         for pair in pairs:
-            temp_list = [arbitrage, coin, amounts, pair[0], pair[1], special_chat]
+            temp_list = [bridge_api, arbitrage, coin, amounts, pair[0], pair[1], special_chat]
             args.append(temp_list)
 
     return args
