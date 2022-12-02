@@ -19,7 +19,6 @@ from src.synapse.api.helpers import (
     print_start_message,
 )
 
-from src.synapse.common.helpers import calculate_workers
 from src.synapse.common.message import telegram_send_message
 from src.synapse.common.variables import time_format
 
@@ -42,9 +41,10 @@ bridge_api = info['settings']['bridge_api']
 
 if args.screen:
     arguments = parse_args(info)
-    configurations = calculate_workers(info)
+    network_configs = len(arguments)
 
-    print(f"\nScreening {configurations} different network configurations...\n")
+    print(f"\nQuerying {bridge_api}\n"
+          f"Screening {network_configs} different network configurations...\n")
     print_start_message(arguments)
 
     telegram_send_message(f"✅ SYNAPSE_API has started.")
@@ -53,7 +53,7 @@ if args.screen:
     while True:
         start = perf_counter()
 
-        with ThreadPoolExecutor(max_workers=configurations) as pool:
+        with ThreadPoolExecutor(max_workers=network_configs) as pool:
             results = pool.map(lambda p: alert_arbitrage(*p), arguments, timeout=20)
 
         sleep(sleep_time)

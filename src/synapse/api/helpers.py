@@ -48,11 +48,12 @@ def print_start_message(arguments: List[list]) -> None:
 
     table = []
     for arg in arguments:
-        min_arb = arg[0]
-        token = arg[1]
-        amounts = arg[2]
-        from_id = str(arg[3][1])
-        to_id = str(arg[4][1])
+        api = arg[0]
+        min_arb = arg[1]
+        token = arg[2]
+        amounts = arg[3]
+        from_id = str(arg[4][1])
+        to_id = str(arg[5][1])
 
         try:
             from_network = network_ids[from_id]
