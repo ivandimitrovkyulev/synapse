@@ -6,7 +6,7 @@ docker run --name="synapse_api" --shm-size="2g" -it -d "eu.gcr.io/hip-orbit-3470
 # nohup python3 container_check.py synapse_api &
 
 
-### For screening via web scrapper
+### For screening via WEB scrapper
 docker run --name="synapse_web" -it -d "eu.gcr.io/hip-orbit-347017/synapse_web" python3 web.py "$(cat web.json)"
 # docker cp synapse_web:/synapse_web/logs/error.log .
 ## To run docker container checker
