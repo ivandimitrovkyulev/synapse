@@ -48,6 +48,7 @@ network_ids = {
     "43114": "Avalanche",
     "1313161554": "Aurora",
     "1666600000": "Harmony",
+    "7700": "Canto",
 }
 
 network_names = {
@@ -65,4 +66,5 @@ network_names = {
     "Avalanche": '43114',
     "Aurora": '1313161554',
     "Harmony": '1666600000',
+    "Canton": '7700',
 }
