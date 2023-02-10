@@ -9,7 +9,6 @@ from atexit import register
 
 from src.synapse.common.message import telegram_send_message
 from src.synapse.common.variables import time_format
-from src.synapse.common.helpers import calculate_workers
 
 from src.synapse.driver.driver import chrome_driver
 from src.synapse.web.exceptions import exit_handler_driver
@@ -38,7 +37,7 @@ max_wait_time = info['settings']['max_wait_time']
 
 arguments = parse_args_web(info)
 
-print(f"\nScreening {calculate_workers(info)} different network configurations...\n")
+print(f"\nScreening {len(arguments)} different network configurations...\n")
 print_start_message(arguments)
 
 telegram_send_message(f"✅ SYNAPSE_WEB has started.")

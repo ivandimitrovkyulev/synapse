@@ -16,7 +16,8 @@
                 "Avalanche": {"decimals": 6,  "chain_id": 43114,      "token": "USDC"},
                 "Binance":   {"decimals": 18, "chain_id": 56,         "token": "USDC"},
                 "Polygon":   {"decimals": 6,  "chain_id": 137,        "token": "USDC"},
-                "Aurora":    {"decimals": 6,  "chain_id": 1313161554, "token": "USDC"}
+                "Aurora":    {"decimals": 6,  "chain_id": 1313161554, "token": "USDC"},
+                "Canto":     {"decimals": 6,  "chain_id": 7700,       "token": "USDC"}
             }
         },
         "ETH": {

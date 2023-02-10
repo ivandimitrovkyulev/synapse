@@ -66,5 +66,5 @@ network_names = {
     "Avalanche": '43114',
     "Aurora": '1313161554',
     "Harmony": '1666600000',
-    "Canton": '7700',
+    "Canto": '7700',
 }
