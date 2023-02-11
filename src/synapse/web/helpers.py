@@ -42,17 +42,17 @@ def parse_args_web(schema: dict) -> List[list]:
     :param schema: Dictionary with input information
     :return: List of argument lists
     """
-    special_chat = schema['settings']['special_chat']
+    special_chat = schema.get('settings').get('special_chat')
+    coins: dict = schema.get('coins')
 
     args = []
-    for coin in schema['coins']:
-        amounts = schema['coins'][coin]['swap_amount']
-        networks = schema['coins'][coin]['networks']
-        min_arbitrage = schema['coins'][coin]['arbitrage']
+    for coin_name, coin_info in coins.items():
+        print(coin_name)
 
-        pairs = [['Ethereum', network] for network in networks]
+        amounts = coin_info.get('swap_amount')
 
-        for pair in pairs:
-            args.append([chrome_driver, amounts, min_arbitrage, pair[0], pair[1], coin, special_chat])
+        for network, info in coin_info.get('networks').items():
+            arbitrage = info.get('arbitrage')
+            args.append([chrome_driver, amounts, arbitrage, 'Ethereum', network, coin_name, special_chat])
 
     return args
