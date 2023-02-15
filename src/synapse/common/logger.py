@@ -1,8 +1,10 @@
+import os
 import logging
 
 from src.synapse.common.variables import (
     log_format,
     time_format,
+    project_root_dir,
 )
 
 
@@ -33,7 +35,20 @@ def logger_setup(
     return logger
 
 
-# Configure logging settings
-log_error = logger_setup("error", "logs/error.log")
-log_telegram = logger_setup("telegram", "logs/telegram.log")
-log_arbitrage = logger_setup("arbitrage", "logs/arbitrage.log")
+try:
+    # Create a Logger class instance
+    log_file = logger_setup("error", f"{project_root_dir}/logs/error.log")
+
+    log_error = logger_setup("error", f"{project_root_dir}/logs/error.log")
+    log_telegram = logger_setup("telegram", f"{project_root_dir}/logs/telegram.log")
+    log_arbitrage = logger_setup("arbitrage", f"{project_root_dir}/logs/arbitrage.log")
+
+except FileNotFoundError:
+    # If ./logs directory does not exist, create one
+    a = os.system(f'mkdir {project_root_dir}/logs')
+
+    # Create a Logger class instance
+    log_error = logger_setup("error", f"{project_root_dir}/logs/error.log")
+    log_telegram = logger_setup("telegram", f"{project_root_dir}/logs/telegram.log")
+    log_arbitrage = logger_setup("arbitrage", f"{project_root_dir}/logs/arbitrage.log")
+    

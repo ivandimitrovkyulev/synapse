@@ -29,6 +29,8 @@ http_session.mount("http://", adapter)
 time_format = "%Y-%m-%d %H:%M:%S, %Z"
 time_format_regex = compile(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}, [A-Za-z]*")
 
+project_root_dir = os.path.abspath(__file__).split('/src')[0]
+
 log_format = "%(asctime)s - %(levelname)s - %(message)s"
 
 stablecoins = ['USDC', 'USDT', 'DAI']
