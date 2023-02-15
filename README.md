@@ -4,23 +4,23 @@ Program that screens https://synapseprotocol.com for arbitrage through their API
 <br>
 Alerts via a Telegram message if something of interest is found.
 
-<br>
 
 ## Installation ##
-<br>
 
-This project uses **Python 3.10** and **poetry 1.1.13**
+This project uses **Python 3.10** and **poetry 1.3.2**
 
 Clone the project:
 ```
-git clone https://github.com/ivandimitrovkyulev/SynapseBridge.git
+git clone https://github.com/ivandimitrovkyulev/synapse.git
 
-cd SynapseBridge
+cd synapse
 ```
 
-Activate virtual environment:
+Configure and activate virtual environment:
 
 ```
+python config --local virtualenvs.in-project true
+
 poetry shell
 ```
 
@@ -35,62 +35,54 @@ TOKEN=<telegram-token-for-your-bot>
 
 CHAT_ID_ALERTS=<id-of-telegram-chat-for-alerts>
 
+CHAT_ID_SPECIAL=<id-of-telegram-special-chat-for-alerts>
+
 CHAT_ID_DEBUG=<id-of-telegram-chat-for-debugging>
 ```
-<br/>
 
 ## Running the script
-<br/>
 
 To screen https://synapseprotocol.com for arbitrage:
 ```
-var="$(cat input.json)"
-
-python3 main.py -s "$var"
+python3 web.py "$(cat web.json)"
 ```
 
 Where **input.json** are variables for screening:
 ```
-{ 
-    "USDC": {
-        "swap_amount": 50000,
-        "arbitrage": 10,
-        "networks": {
-            "Ethereum":  {"decimals": 6,  "chain_id": 1,     "token": "USDC"},
-            "Optimism":  {"decimals": 6,  "chain_id": 10,    "token": "USDC"},
-            "Fantom":    {"decimals": 6,  "chain_id": 250,   "token": "USDC"},
-        }
+{   
+    "settings": {
+        "sleep_time": 0, "max_wait_time": 15, "special_chat": {"max_swap_amount": 10000, "coins": ["USDC"]}
     },
-    "ETH": {
-        "swap_amount": 50,
-        "arbitrage": 0.02,
-        "networks": {
-            "Ethereum":  {"decimals": 18, "chain_id": 1,     "token": "ETH"},
-            "Optimism":  {"decimals": 18, "chain_id": 10,    "token": "WETH"},
-            "Fantom":    {"decimals": 18, "chain_id": 250,   "token": "FTM_ETH"},
+    "coins": {
+        "USDC": {
+            "swap_amount": [10000, 100000],
+            "networks": {
+                "Optimism":  {"decimals": 6,  "chain_id": 10,         "token": "USDC", "arbitrage": 30},
+                "Fantom":    {"decimals": 6,  "chain_id": 250,        "token": "USDC", "arbitrage": 30},
+                "Arbitrum":  {"decimals": 6,  "chain_id": 42161,      "token": "USDC", "arbitrage": 30},
+                "Avalanche": {"decimals": 6,  "chain_id": 43114,      "token": "USDC", "arbitrage": 30},
+                "Binance":   {"decimals": 18, "chain_id": 56,         "token": "USDC", "arbitrage": 30},
+                "Polygon":   {"decimals": 6,  "chain_id": 137,        "token": "USDC", "arbitrage": 30},
+                "Aurora":    {"decimals": 6,  "chain_id": 1313161554, "token": "USDC", "arbitrage": 30},
+                "Canto":     {"decimals": 6,  "chain_id": 7700,       "token": "USDC", "arbitrage": 30}
+            }
         }
     }
 }
 ```
 <br>
 
-All log filles are saved in **./synapse/logs**
+All log filles are saved in **./logs**
 
-For help:
-```
-python3 main.py --help
-```
-<br>
 
 ## Docker Deploy ##
-<br>
 
 ```
 # To build a Docker image
-docker build . -t <docker-image-name>
+docker build -f Dockerfile.web . -t synapse_web_image
 
 # To run container
-docker run -it <image-id> python3 main.py -s "$var"
+docker run --name="synapse_web" -it -d "synapse_web_image" python3 web.py "$(cat web.json)"
 ```
 
 <br>
