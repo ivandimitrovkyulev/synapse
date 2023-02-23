@@ -51,4 +51,3 @@ except FileNotFoundError:
     log_error = logger_setup("error", f"{project_root_dir}/logs/error.log")
     log_telegram = logger_setup("telegram", f"{project_root_dir}/logs/telegram.log")
     log_arbitrage = logger_setup("arbitrage", f"{project_root_dir}/logs/arbitrage.log")
-    

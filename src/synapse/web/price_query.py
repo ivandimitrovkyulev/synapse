@@ -82,7 +82,6 @@ def query_synapse(
 
         timeout = time.time() + 20
         out_xpath = "//*[@id='root']/div[1]/div[2]/main/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div[2]/div[2]/div/input"
-        out_xpath = "//*[@id='root']/div[1]/div[2]/main/div/div[2]/div/div[1]/div/div[2]/div/div[1]/div[2]/div[2]/div/input"
         while True:
             out_field = driver.find_element(By.XPATH, out_xpath)
             received = out_field.get_attribute("value")
