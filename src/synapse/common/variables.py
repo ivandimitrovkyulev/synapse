@@ -64,7 +64,7 @@ network_names = {
     "Metis": '1088',
     "Moonbeam": '1284',
     "Moonriver": '1285',
-    "Arbitrum": '42162',
+    "Arbitrum": '42161',
     "Avalanche": '43114',
     "Aurora": '1313161554',
     "Harmony": '1666600000',
