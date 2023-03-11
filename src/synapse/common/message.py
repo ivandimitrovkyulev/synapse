@@ -1,7 +1,6 @@
 import requests
 
 from time import sleep
-from typing import Optional
 
 from requests.exceptions import ConnectionError
 
@@ -13,11 +12,11 @@ from src.synapse.common.variables import (
 )
 
 
-def telegram_send_message(
+def telegram_send_msg(
         message_text: str,
         disable_web_page_preview: bool = True,
-        telegram_token: Optional[str] = "",
-        telegram_chat_id: Optional[str] = "",
+        telegram_token: str = TOKEN,
+        telegram_chat_id: str = CHAT_ID_ALERTS,
         debug: bool = False,
         timeout: float = 10,
         sleep_time: int = 3,
@@ -43,23 +42,20 @@ def telegram_send_message(
     telegram_chat_id = str(telegram_chat_id)
     message_text = str(message_text)
 
-    # if Token not provided - try TOKEN variable from the .env file
-    if telegram_token == "":
-        telegram_token = TOKEN
-
     # if Chat ID not provided - try CHAT_ID_ALERTS or CHAT_ID_DEBUG variable from the .env file
-    if telegram_chat_id == "":
-        if debug:
-            telegram_chat_id = CHAT_ID_DEBUG
-        else:
-            telegram_chat_id = CHAT_ID_ALERTS
+    if debug:
+        telegram_chat_id = CHAT_ID_DEBUG
 
     # construct url using token for a sendMessage POST request
-    url = "https://api.telegram.org/bot{}/sendMessage".format(telegram_token)
+    url = f"https://api.telegram.org/bot{telegram_token}/sendMessage"
 
     # Construct data for the request
-    payload = {"chat_id": telegram_chat_id, "text": message_text,
-               "disable_web_page_preview": disable_web_page_preview, "parse_mode": "HTML"}
+    payload = {
+        "chat_id": telegram_chat_id,
+        "text": message_text,
+        "disable_web_page_preview": disable_web_page_preview,
+        "parse_mode": "HTML"
+    }
 
     # send the POST request
     try:
