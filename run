@@ -2,9 +2,9 @@
 
 set -e
 
-# docker cp synapse_web:/synapse_web/logs/error.log .
+# docker cp synapse_web:/app/logs/error.log .
 
-docker run --name="synapse_web" -d -v $(pwd)/web.json:/app/web.json "synapse_web"
+docker run --name="synapse_web" -d -v $(pwd)/web.json:/app/web.json "eu.gcr.io/hip-orbit-347017/synapse_web"
 
-docker cp synapse_web:/synapse_web/.env . | chmod go-rw .env
+docker cp synapse_web:/app/.env . | chmod go-rw .env
 nohup python3 container_check.py synapse_web &

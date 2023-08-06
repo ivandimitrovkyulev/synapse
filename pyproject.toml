@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "Synapse"
-version = "v1.0.1"
+version = "v1.0.2"
 description = "Synapse Bridge (https://www.synapseprotocol.com/) screener."
 authors = ["IK <ivandkyulev@gmail.com>"]
 

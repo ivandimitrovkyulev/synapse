@@ -1,15 +1,14 @@
-!# /usr/bin/env bash
-
 set -e
 
 IMAGE_NAME="synapse_web"
 
 
 # Build Image
-docker build -f docker/web/Dockerfile . -t "$IMAGE_NAME"
+echo "Building $IMAGE_NAME"
+docker build -f docker/web/Dockerfile . -t $IMAGE_NAME
 
 # Tag Image
-docker tag synapse_web eu.gcr.io/hip-orbit-347017/"$IMAGE_NAME":latest
+docker tag synapse_web eu.gcr.io/hip-orbit-347017/$IMAGE_NAME:latest
 
 # Push Image to GCP
-docker push eu.gcr.io/hip-orbit-347017/"$IMAGE_NAME":latest
+docker push eu.gcr.io/hip-orbit-347017/$IMAGE_NAME:latest

@@ -1,0 +1,8 @@
+set -e
+
+sudo usermod -aG docker ivandkyulev_gmail_com
+sudo -u ivandkyulev_gmail_com docker-credential-gcr configure-docker
+sudo systemctl restart docker
+
+# To run a command as a specific user
+sudo -u ivandkyulev_gmail_com docker pull eu.gcr.io/hip-orbit-347017/synapse_web:latest
