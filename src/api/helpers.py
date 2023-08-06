@@ -2,7 +2,7 @@ from itertools import permutations
 from typing import List
 from hashlib import sha256
 from tabulate import tabulate
-from src.synapse.common.variables import network_ids
+from src.variables import network_ids
 
 
 def parse_args(schema: dict) -> List[list]:

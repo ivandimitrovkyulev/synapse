@@ -11,16 +11,16 @@ from time import (
 )
 from concurrent.futures import ThreadPoolExecutor
 
-from src.synapse.interface import args
-from src.synapse.api.rpc import alert_arbitrage
-from src.synapse.api.exceptions import exit_handler
-from src.synapse.api.helpers import (
+from src.interface import args
+from src.api.rpc import alert_arbitrage
+from src.api.exceptions import exit_handler
+from src.api.helpers import (
     parse_args,
     print_start_message,
 )
 
-from src.synapse.common.message import telegram_send_message
-from src.synapse.common.variables import time_format
+from src.common.message import telegram_send_msg
+from src.variables import time_format
 
 
 if len(sys.argv) != 3:
@@ -47,7 +47,7 @@ if args.screen:
           f"Screening {network_configs} different network configurations...\n")
     print_start_message(arguments)
 
-    telegram_send_message(f"✅ SYNAPSE_API has started.")
+    telegram_send_msg(f"✅ SYNAPSE_API has started.")
 
     loop_counter = 1
     while True:

@@ -1,7 +1,7 @@
 import os
 import logging
 
-from src.synapse.common.variables import (
+from src.variables import (
     log_format,
     time_format,
     project_root_dir,

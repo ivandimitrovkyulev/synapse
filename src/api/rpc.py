@@ -7,14 +7,14 @@ from json.decoder import JSONDecodeError
 
 from requests.exceptions import ConnectionError
 
-from src.synapse.api.helpers import hash_arb_data
-from src.synapse.common.variables import network_ids
-from src.synapse.common.message import telegram_send_message
-from src.synapse.common.logger import (
+from src.api.helpers import hash_arb_data
+from src.variables import network_ids
+from src.common.message import telegram_send_msg
+from src.common.logger import (
     log_error,
     log_arbitrage,
 )
-from src.synapse.common.variables import (
+from src.variables import (
     time_format,
     stablecoins,
     http_session,
@@ -189,14 +189,14 @@ def alert_arbitrage(bridge_api: str, min_arb: float, coin: str, amounts: list,
                   f"--->Arbitrage: {arbitrage:,} {token_out}"
 
         # Send arbitrage to ALL alerts channel and log
-        telegram_send_message(message, telegram_chat_id=CHAT_ID_ALERTS)
+        telegram_send_msg(message, telegram_chat_id=CHAT_ID_ALERTS)
         log_arbitrage.info(ter_msg)
         print(ter_msg)
 
         # If special chat required, send telegram msg to it
         if special_chat:
             if float(special_chat['max_swap_amount']) >= float(amount_in) and token_in.upper() in special_chat['coins']:
-                telegram_send_message(message, telegram_chat_id=CHAT_ID_SPECIAL)
+                telegram_send_msg(message, telegram_chat_id=CHAT_ID_SPECIAL)
 
         # Hash id to compare arbs later
         id_hash = hash_arb_data(network_in, network_out, arbitrage)

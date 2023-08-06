@@ -7,13 +7,16 @@ from time import sleep, perf_counter
 from datetime import datetime
 from atexit import register
 
-from src.synapse.common.message import telegram_send_message
-from src.synapse.common.variables import time_format
+from src.common.message import telegram_send_msg
+from src.variables import time_format
 
-from src.synapse.driver.driver import chrome_driver
-from src.synapse.web.exceptions import exit_handler_driver
-from src.synapse.web.price_query import query_synapse
-from src.synapse.web.helpers import (
+from src.driver.driver import chrome_driver
+from src.web.exceptions import exit_handler_driver
+from src.web.price_query import (
+    query_synapse,
+    SynapseFrontEndExc,
+)
+from src.web.helpers import (
     parse_args_web,
     print_start_message,
 )
@@ -27,7 +30,8 @@ program_name = os.path.abspath(os.path.basename(__file__))
 register(exit_handler_driver, chrome_driver, program_name)
 
 # Fetch variables
-info = json.loads(sys.argv[-1])
+with open(sys.argv[-1], 'r') as file:
+    info = json.loads(file.read())
 timestamp = datetime.now().astimezone().strftime(time_format)
 print(f"{timestamp} - Started screening:\n")
 pprint(info)
@@ -40,14 +44,23 @@ arguments = parse_args_web(info)
 print(f"\nScreening {len(arguments)} different network configurations...\n")
 print_start_message(arguments)
 
-telegram_send_message(f"✅ SYNAPSE_WEB has started.")
+telegram_send_msg(f"✅ SYNAPSE_WEB has started.")
 
 loop_counter = 1
+front_end_fails = 0
 while True:
     start = perf_counter()
 
     for arg in arguments:
-        query_synapse(*arg, max_wait_time)
+        try:
+            query_synapse(*arg, max_wait_time)
+
+        except SynapseFrontEndExc as ex:
+            front_end_fails += 1
+
+            if front_end_fails >= 1:
+                front_end_fails = 0
+                telegram_send_msg(f"{ex}", debug=True)
 
     # Sleep and print loop info
     sleep(sleep_time)

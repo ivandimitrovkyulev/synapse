@@ -1,6 +1,6 @@
 from argparse import ArgumentParser
 
-from src.synapse import __version__
+from src import __version__
 
 
 # Create CLI interface

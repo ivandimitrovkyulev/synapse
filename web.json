@@ -10,7 +10,7 @@
                 "Fantom":    {"decimals": 6,  "chain_id": 250,        "token": "USDC", "arbitrage": 30},
                 "Arbitrum":  {"decimals": 6,  "chain_id": 42161,      "token": "USDC", "arbitrage": 30},
                 "Avalanche": {"decimals": 6,  "chain_id": 43114,      "token": "USDC", "arbitrage": 30},
-                "Binance":   {"decimals": 18, "chain_id": 56,         "token": "USDC", "arbitrage": 30},
+                "BNB":       {"decimals": 18, "chain_id": 56,         "token": "USDC", "arbitrage": 30},
                 "Polygon":   {"decimals": 6,  "chain_id": 137,        "token": "USDC", "arbitrage": 30},
                 "Aurora":    {"decimals": 6,  "chain_id": 1313161554, "token": "USDC", "arbitrage": 30},
                 "Canto":     {"decimals": 6,  "chain_id": 7700,       "token": "USDC", "arbitrage": 30}

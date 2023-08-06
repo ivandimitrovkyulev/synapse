@@ -4,8 +4,8 @@ from time import sleep
 
 from requests.exceptions import ConnectionError
 
-from src.synapse.common.logger import log_error
-from src.synapse.common.variables import (
+from src.common.logger import log_error
+from src.variables import (
     TOKEN,
     CHAT_ID_ALERTS,
     CHAT_ID_DEBUG,
@@ -47,7 +47,7 @@ def telegram_send_msg(
         telegram_chat_id = CHAT_ID_DEBUG
 
     # construct url using token for a sendMessage POST request
-    url = f"https://api.telegram.org/bot{telegram_token}/sendMessage"
+    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
 
     # Construct data for the request
     payload = {
@@ -67,11 +67,13 @@ def telegram_send_msg(
             if post_request.json()['ok']:
                 return post_request
 
-            log_error.warning(f"'telegram_send_message' - Telegram message not sent, attempt {counter}. "
+            post_request.raise_for_status()
+
+            log_error.warning(f"'telegram_send_msg' - Message not sent, attempt {counter}. "
                               f"Sleeping for {sleep_time} secs...")
             counter += 1
             sleep(sleep_time)
 
     except ConnectionError as e:
-        log_error.warning(f"'telegram_send_message' - {e} - '{message_text})' was not sent.")
+        log_error.warning(f"'telegram_send_msg' - {e} - '{message_text})' was not sent.")
         return None

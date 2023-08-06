@@ -1,7 +1,7 @@
 from typing import List
 from tabulate import tabulate
 
-from src.synapse.driver.driver import chrome_driver
+from src.driver.driver import chrome_driver
 
 
 def print_start_message(arguments: List[list]) -> None:

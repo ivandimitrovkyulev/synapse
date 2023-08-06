@@ -11,7 +11,7 @@ import requests
 from atexit import register
 
 
-def telegram_send_message(message_text: str, teleg_chat_id: str,
+def telegram_send_msg(message_text: str, teleg_chat_id: str,
                           teleg_token: str) -> requests.Response or None:
     """Sends a Telegram message to a specified chat."""
 
@@ -68,7 +68,7 @@ program_name = os.path.abspath(os.path.basename(__file__))
 program_start_time = datetime.datetime.now()
 
 container_name = sys.argv[-1]
-register(telegram_send_message, f"⚠️ <b>{container_name.upper()}: container_check.py</b> stopped!",
+register(telegram_send_msg, f"⚠️ <b>{container_name.upper()}: container_check.py</b> stopped!",
          chat_id_debug, token)
 
 wait_time = 5 * 60  # 5 mins (5 * 60 secs) sleep time in each loop
@@ -107,8 +107,8 @@ while True:
                   f"<b>{program_name}</b> stopped!\n Last loop time: {loop_time:,.2f} secs.\n"
 
         # Send Telegram message in Alerts and Debug Chat and Break
-        telegram_send_message(message, teleg_chat_id=chat_id_alerts, teleg_token=token)
-        telegram_send_message(message, teleg_chat_id=chat_id_debug, teleg_token=token)
+        telegram_send_msg(message, teleg_chat_id=chat_id_alerts, teleg_token=token)
+        telegram_send_msg(message, teleg_chat_id=chat_id_debug, teleg_token=token)
 
         break
 
@@ -117,7 +117,7 @@ while True:
         message = f"✅ {container_name.upper()}. Last loop time: {loop_time:,.2f} secs."
 
         # Send Telegram message in Debug Chat
-        telegram_send_message(message, teleg_chat_id=chat_id_debug, teleg_token=token)
+        telegram_send_msg(message, teleg_chat_id=chat_id_debug, teleg_token=token)
         program_start_time = datetime.datetime.now()
 
     time.sleep(wait_time)
