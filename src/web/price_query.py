@@ -24,6 +24,10 @@ class SynapseFrontEndExc(Exception):
     pass
 
 
+class SynapseAmountOutExc(Exception):
+    pass
+
+
 def query_synapse(
         driver: Chrome,
         amounts: list,
@@ -146,9 +150,9 @@ def query_synapse(
 
         try:
             received = float(received.replace(",", ""))
-        except ValueError as e:
-            log_error.warning(f"ReceivedError - {token_name}, {src_network_name} -> {dest_network_name} - {e}")
-            raise SynapseFrontEndExc
+        except ValueError as ex:
+            log_error.warning(f"{src_network_name} -> {dest_network_name}, {token_name}. Received Error: {ex}")
+            raise SynapseAmountOutExc
 
         # Calculate arbitrage
         arbitrage = received - amount

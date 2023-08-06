@@ -15,6 +15,7 @@ from src.web.exceptions import exit_handler_driver
 from src.web.price_query import (
     query_synapse,
     SynapseFrontEndExc,
+    SynapseAmountOutExc,
 )
 from src.web.helpers import (
     parse_args_web,
@@ -61,6 +62,9 @@ while True:
             if front_end_fails >= 1:
                 front_end_fails = 0
                 telegram_send_msg(f"{ex}", debug=True)
+
+        except SynapseAmountOutExc as ex:
+            pass
 
     # Sleep and print loop info
     sleep(sleep_time)

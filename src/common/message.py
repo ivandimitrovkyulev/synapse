@@ -67,8 +67,6 @@ def telegram_send_msg(
             if post_request.json()['ok']:
                 return post_request
 
-            post_request.raise_for_status()
-
             log_error.warning(f"'telegram_send_msg' - Message not sent, attempt {counter}. "
                               f"Sleeping for {sleep_time} secs...")
             counter += 1
