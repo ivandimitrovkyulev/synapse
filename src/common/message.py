@@ -61,7 +61,7 @@ def telegram_send_msg(
     }
 
     # send the POST request
-    log_telegram.debug(f"Sending: {message_text}")
+    log_telegram.debug(f"Telegram Sending: {message_text}")
     try:
         counter = 1
         # If too many requests, wait for Telegram's rate limit
@@ -71,11 +71,11 @@ def telegram_send_msg(
             if post_request.json()['ok']:
                 return post_request
 
-            log_error.warning(f"'telegram_send_msg' - Message not sent, attempt {counter}. "
+            log_error.warning(f"'Telegram Message not sent, attempt {counter}. "
                               f"Sleeping {sleep_time} secs...")
             counter += 1
             sleep(sleep_time)
 
-    except ConnectionError as e:
-        log_error.warning(f"'telegram_send_msg' - {e} - '{message_text})' was not sent.")
+    except ConnectionError as ex:
+        log_error.warning(f"'Telegram Message not sent: {message_text}. {ex}")
         return None
