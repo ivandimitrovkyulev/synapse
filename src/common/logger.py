@@ -11,7 +11,7 @@ from src.variables import (
 def logger_setup(
         log_name: str,
         filename: str,
-        level=logging.INFO,
+        level=logging.DEBUG,
 ) -> logging.Logger:
     """
     Sets up a new logger config.
@@ -35,19 +35,10 @@ def logger_setup(
     return logger
 
 
-try:
-    # Create a Logger class instance
-    log_file = logger_setup("error", f"{project_root_dir}/logs/error.log")
+logs_dir_path = f"{project_root_dir}/logs"
+if not os.path.isdir(logs_dir_path):
+    os.mkdir(logs_dir_path)
 
-    log_error = logger_setup("error", f"{project_root_dir}/logs/error.log")
-    log_telegram = logger_setup("telegram", f"{project_root_dir}/logs/telegram.log")
-    log_arbitrage = logger_setup("arbitrage", f"{project_root_dir}/logs/arbitrage.log")
-
-except FileNotFoundError:
-    # If ./logs directory does not exist, create one
-    a = os.system(f'mkdir {project_root_dir}/logs')
-
-    # Create a Logger class instance
-    log_error = logger_setup("error", f"{project_root_dir}/logs/error.log")
-    log_telegram = logger_setup("telegram", f"{project_root_dir}/logs/telegram.log")
-    log_arbitrage = logger_setup("arbitrage", f"{project_root_dir}/logs/arbitrage.log")
+log_error = logger_setup("error", f"{project_root_dir}/logs/error.log")
+log_telegram = logger_setup("telegram", f"{project_root_dir}/logs/telegram.log")
+log_arbitrage = logger_setup("arbitrage", f"{project_root_dir}/logs/arbitrage.log")

@@ -4,7 +4,10 @@ from time import sleep
 
 from requests.exceptions import ConnectionError
 
-from src.common.logger import log_error
+from src.common.logger import (
+    log_error,
+    log_telegram,
+)
 from src.variables import (
     TOKEN,
     CHAT_ID_ALERTS,
@@ -47,7 +50,7 @@ def telegram_send_msg(
         telegram_chat_id = CHAT_ID_DEBUG
 
     # construct url using token for a sendMessage POST request
-    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+    url = f"https://api.telegram.org/bot{telegram_token}/sendMessage"
 
     # Construct data for the request
     payload = {
@@ -58,6 +61,7 @@ def telegram_send_msg(
     }
 
     # send the POST request
+    log_telegram.debug(f"Sending: {message_text}")
     try:
         counter = 1
         # If too many requests, wait for Telegram's rate limit
@@ -68,7 +72,7 @@ def telegram_send_msg(
                 return post_request
 
             log_error.warning(f"'telegram_send_msg' - Message not sent, attempt {counter}. "
-                              f"Sleeping for {sleep_time} secs...")
+                              f"Sleeping {sleep_time} secs...")
             counter += 1
             sleep(sleep_time)
 
