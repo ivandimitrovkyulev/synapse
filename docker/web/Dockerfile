@@ -27,7 +27,6 @@ RUN poetry config virtualenvs.create false \
 
 # Copy all project files
 COPY src ./src
-COPY logs ./logs
 COPY web.py .env .
 
 
