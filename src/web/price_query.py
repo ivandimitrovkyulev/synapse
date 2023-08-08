@@ -35,7 +35,7 @@ def query_synapse(
         src_network_name: str = "Ethereum",
         dest_network_name: str = "Optimism",
         token_name: str = "USDC",
-        special_chat: dict = {},
+        special_chat: dict | None = None,
         max_wait_time: int = 15,
 ) -> None:
     """
@@ -162,19 +162,20 @@ def query_synapse(
                   f"Sell {amount:,} {token_name} for {received:,.2f}; {src_network_name} -> {dest_network_name}\n" \
                   f"\t-->Arbitrage: <a href='{url}'>{arbitrage:,.2f} {token_name}</a>\n"
 
-        ter_msg = f"Sell {amount:,} {token_name} for {received:,.2f}; {src_network_name} -> {dest_network_name}\n" \
-                  f"\t-->Arbitrage: {arbitrage:,.2f} {token_name}\n"
+        ter_msg = f"Sell {amount:,} {token_name} for {received:,.2f}; {src_network_name} -> {dest_network_name} " \
+                  f" -->Arbitrage: {arbitrage:,.2f} {token_name}"
 
         # Record all arbs to select the highest later
-        if arbitrage >= min_arbitrage:
-            all_arbs[arbitrage] = [message, ter_msg, amount]
+        all_arbs[arbitrage] = [message, ter_msg, amount]
 
-    if len(all_arbs) > 0:
-        highest_arb = max(all_arbs)
+    highest_arb = max(all_arbs)
+    message = all_arbs[highest_arb][0]
+    ter_msg = all_arbs[highest_arb][1]
+    amount_in = all_arbs[highest_arb][2]
 
-        message = all_arbs[highest_arb][0]
-        ter_msg = all_arbs[highest_arb][1]
-        amount_in = all_arbs[highest_arb][2]
+    log_arbitrage.debug(ter_msg)
+
+    if highest_arb >= min_arbitrage:
 
         telegram_send_msg(message, telegram_chat_id=CHAT_ID_ALERTS)
 

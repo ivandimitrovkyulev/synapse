@@ -59,9 +59,9 @@ while True:
         except SynapseFrontEndExc as ex:
             front_end_fails += 1
 
-            if front_end_fails >= 10:
-                front_end_fails = 0
+            if front_end_fails >= 100:
                 telegram_send_msg(f"SynapseFrontEndExc encountered more than {front_end_fails} times", debug=True)
+                front_end_fails = 0
 
         except SynapseAmountOutExc as ex:
             pass

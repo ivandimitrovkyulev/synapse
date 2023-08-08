@@ -61,7 +61,7 @@ def telegram_send_msg(
     }
 
     # send the POST request
-    log_telegram.debug(f"Telegram Sending: {message_text}")
+    log_telegram.info(f"Telegram Sending: {message_text}")
     try:
         counter = 1
         # If too many requests, wait for Telegram's rate limit
