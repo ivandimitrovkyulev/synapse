@@ -46,10 +46,10 @@ def query_synapse(
     :param min_arbitrage: Minimum arbitrage to alert for
     :param src_network_name: Chain ID source
     :param dest_network_name: Chain ID destination
-    :param token_name: Token code, eg. USDC
+    :param token_name: Token code, for example USDC
     :param max_wait_time: Maximum number of seconds to wait for driver element
     :param special_chat: Send specific info, if empty ignore
-    :raises raise SynapseFrontEndExc: If synapse front end can not be reached
+    :raises raise SynapseFrontEndExc: If Synapse front end can not be reached
     """
 
     url = f"https://www.synapseprotocol.com/"
@@ -73,8 +73,8 @@ def query_synapse(
         xpath = '//*[@id="__next"]/div/div[1]/div[3]/main/div/div[2]/div[1]/div[2]/div/div[1]/div/div/div[2]/div[1]'
         WebDriverWait(driver, max_wait_time).until(ec.presence_of_element_located((By.XPATH, xpath)))
         driver.find_element(By.XPATH, xpath).click()
-    except Exception as ex:
-        log_error.warning(f"{src_network_name} -> {dest_network_name}, {token_name}. CoinIN Error: {ex}")
+    except Exception:
+        log_error.warning(f"{src_network_name} -> {dest_network_name}, {token_name}. CoinIN Error")
         raise SynapseFrontEndExc
     finally:
         webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
@@ -91,8 +91,8 @@ def query_synapse(
         xpath = '//*[@id="__next"]/div/div[1]/div[3]/main/div/div[2]/div[1]/div[2]/div/div[1]/div/div/div[2]/div[1]'
         WebDriverWait(driver, max_wait_time).until(ec.presence_of_element_located((By.XPATH, xpath)))
         driver.find_element(By.XPATH, xpath).click()
-    except Exception as ex:
-        log_error.warning(f"{src_network_name} -> {dest_network_name}, {token_name}. AmountIn Error: {ex}")
+    except Exception:
+        log_error.warning(f"{src_network_name} -> {dest_network_name}, {token_name}. AmountIn Error")
         raise SynapseFrontEndExc
     finally:
         webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
@@ -109,8 +109,8 @@ def query_synapse(
         xpath = '//*[@id="__next"]/div/div[1]/div[3]/main/div/div[2]/div[1]/div[2]/div/div[1]/div/div/div[2]/button'
         WebDriverWait(driver, max_wait_time).until(ec.presence_of_element_located((By.XPATH, xpath)))
         driver.find_element(By.XPATH, xpath).click()
-    except Exception as ex:
-        log_error.warning(f"{src_network_name} -> {dest_network_name}, {token_name}. AmountIn Error: {ex}")
+    except Exception:
+        log_error.warning(f"{src_network_name} -> {dest_network_name}, {token_name}. AmountIn Error")
         raise SynapseFrontEndExc
     finally:
         webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
@@ -123,8 +123,8 @@ def query_synapse(
         try:
             in_field = WebDriverWait(driver, max_wait_time).until(ec.element_to_be_clickable((By.XPATH, in_xpath)))
 
-        except Exception as ex:
-            log_error.warning(f"{src_network_name} -> {dest_network_name}, {token_name}. AmountIn Error: {ex}")
+        except Exception:
+            log_error.warning(f"{src_network_name} -> {dest_network_name}, {token_name}. AmountIn Error")
             raise SynapseFrontEndExc
 
         # Clear the entire field
@@ -140,8 +140,8 @@ def query_synapse(
         while True:
             try:
                 out_field = WebDriverWait(driver, max_wait_time).until(ec.presence_of_element_located((By.XPATH, out_xpath)))
-            except Exception as ex:
-                log_error.warning(f"{src_network_name} -> {dest_network_name}, {token_name}. AmountIn Error: {ex}")
+            except Exception:
+                log_error.warning(f"{src_network_name} -> {dest_network_name}, {token_name}. AmountIn Error")
                 raise SynapseFrontEndExc
 
             received = out_field.get_attribute("value")
@@ -150,8 +150,8 @@ def query_synapse(
 
         try:
             received = float(received.replace(",", ""))
-        except ValueError as ex:
-            log_error.warning(f"{src_network_name} -> {dest_network_name}, {token_name}. Received Error: {ex}")
+        except ValueError:
+            log_error.warning(f"{src_network_name} -> {dest_network_name}, {token_name}. Received Error")
             raise SynapseAmountOutExc
 
         # Calculate arbitrage
@@ -168,10 +168,10 @@ def query_synapse(
         # Record all arbs to select the highest later
         all_arbs[arbitrage] = [message, ter_msg, amount]
 
+    # Get the highest arbitrage
     highest_arb = max(all_arbs)
-    message = all_arbs[highest_arb][0]
-    ter_msg = all_arbs[highest_arb][1]
-    amount_in = all_arbs[highest_arb][2]
+    # Get highest arbitrage details
+    message, ter_msg, amount_in = all_arbs[highest_arb]
 
     log_arbitrage.debug(ter_msg)
 

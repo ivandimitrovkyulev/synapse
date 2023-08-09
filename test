@@ -1,0 +1,13 @@
+#! /usr/bin/env bash
+
+
+CONTAINER="synapse_web"
+
+source .env
+
+message_text="testing something"
+
+url="https://api.telegram.org/bot$TOKEN/sendMessage"
+data="{\"chat_id\": \"$CHAT_ID_DEBUG\", \"text\": \"$message_text\", \"disable_web_page_preview\": false, \"parse_mode\": \"HTML\"}"
+
+curl -X POST -H "Content-Type: application/json" -d "$data" "$url"
