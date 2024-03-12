@@ -1,12 +1,15 @@
 {   
     "settings": {
         "sleep_time": 7,
-        "special_chat": {"max_swap_amount": 10000, "coins": ["USDC"]},
-        "bridge_api": "https://syn-api-x.herokuapp.com/v1/estimate_bridge_output"
+        "special_chat": {
+            "max_swap_amount": 10000,
+            "coins": ["USDC"]
+        },
+        "bridge_api": "https://synapse-rest-api-v2.herokuapp.com/estimate_bridge_output"
     },
     "coins": {
         "USDC": {
-            "swap_amount": [8000, 30000, 50000, 75000, 100000, 150000, 200000],
+            "swap_amount": [9000, 30000, 50000, 75000, 100000, 150000, 200000],
             "arbitrage": 25,
             "networks": {
                 "Ethereum":  {"decimals": 6,  "chain_id": 1,          "token": "USDC"},
@@ -17,7 +20,10 @@
                 "Binance":   {"decimals": 18, "chain_id": 56,         "token": "USDC"},
                 "Polygon":   {"decimals": 6,  "chain_id": 137,        "token": "USDC"},
                 "Aurora":    {"decimals": 6,  "chain_id": 1313161554, "token": "USDC"},
-                "Canto":     {"decimals": 6,  "chain_id": 7700,       "token": "USDC"}
+                "Canto":     {"decimals": 6,  "chain_id": 7700,       "token": "USDC"},
+                "Base":      {"decimals": 6,  "chain_id": 8453,       "token": "USDC"},
+                "Blast":     {"decimals": 6,  "chain_id": 81457,      "token": "USDC"},
+                "Cronos":    {"decimals": 6,  "chain_id": 25,         "token": "USDC"}
             }
         },
         "ETH": {

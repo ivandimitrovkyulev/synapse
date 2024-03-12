@@ -51,6 +51,8 @@ network_ids = {
     "1313161554": "Aurora",
     "1666600000": "Harmony",
     "7700": "Canto",
+    "8453": "Base",
+    "81457": "Blast",
 }
 
 network_names = {

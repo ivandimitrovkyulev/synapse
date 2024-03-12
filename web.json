@@ -1,6 +1,8 @@
 {   
     "settings": {
-        "sleep_time": 0, "max_wait_time": 15, "special_chat": {"max_swap_amount": 10000, "coins": ["USDC"]}
+        "sleep_time": 0,
+        "max_wait_time": 15,
+        "special_chat": {"max_swap_amount": 10000, "coins": ["USDC"]}
     },
     "coins": {
         "USDC": {
